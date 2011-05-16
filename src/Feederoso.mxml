@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MobileApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					 xmlns:s="library://ns.adobe.com/flex/spark" 
+					 firstView="views.FeederosoHome"
+					 creationComplete="onCreationComplete(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import puremvc.ApplicationFacade;
+			
+			private function onCreationComplete(event:FlexEvent):void
+			{
+				trace("Creation Complete");
+				ApplicationFacade.getInstance().startup(this.stage);
+			}
+			
+		]]>
+	</fx:Script>
+	
+</s:MobileApplication>
