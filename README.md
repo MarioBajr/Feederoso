@@ -23,8 +23,8 @@ We are using [PureMVC] pattern.
 References
 ----------
 
-Blackberry Interface API: http://www.blackberry.com/developers/docs/airapi/1.0.0/package-summary.html
-Google Reader API: http://code.google.com/p/pyrfeed/wiki/GoogleReaderAPI
+- Blackberry Interface API: http://www.blackberry.com/developers/docs/airapi/1.0.0/package-summary.html
+- Google Reader API: http://code.google.com/p/pyrfeed/wiki/GoogleReaderAPI
 
 
 [PureMVC]: http://puremvc.org/
