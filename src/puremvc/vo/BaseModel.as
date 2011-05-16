@@ -31,8 +31,6 @@ package puremvc.vo
 						this.setUpList( item );
 						break;
 				}
-				
-//				trace(item.attribute("name"), kind, label);
 			}
 		}
 		

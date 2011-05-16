@@ -10,8 +10,6 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import com.demonsters.debugger.MonsterDebugger;
-			
 			import mx.events.FlexEvent;
 			import mx.logging.ILogger;
 			import mx.logging.Log;

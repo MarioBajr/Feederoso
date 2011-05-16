@@ -4,13 +4,9 @@ package puremvc.proxy
 	
 	public class FeedProxy extends Proxy
 	{
-		
-		
 		public function FeedProxy(proxyName:String=null, data:Object=null)
 		{
 			super(proxyName, data);
 		}
-		
-		
 	}
 }

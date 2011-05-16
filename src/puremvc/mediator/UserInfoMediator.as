@@ -30,11 +30,6 @@ package puremvc.mediator
 		 * Override Methods
 		 **/
 		
-		override public function onRegister():void
-		{
-			trace("Register Aqiu tb");
-		}
-		
 		override public function listNotificationInterests():Array
 		{
 			return [

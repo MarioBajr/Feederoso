@@ -37,7 +37,6 @@ package puremvc.proxy
 				
 				this.subscriptionsList.push( sub );
 			}
-			//trace(data);
 		}
 	}
 }
