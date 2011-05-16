@@ -4,7 +4,7 @@ Feederoso
 This is a Google Reader client for Blackberry Playbook.
 
 Configuring System
-__________________
+----------
 
 Download Playbook Simulator and Playbook SDK on [Blackberry Developer] website.
 
@@ -21,7 +21,7 @@ Download Playbook Simulator and Playbook SDK on [Blackberry Developer] website.
 We are using [PureMVC] pattern.
 
 References
-__________
+----------
 
 Blackberry Interface API: http://www.blackberry.com/developers/docs/airapi/1.0.0/package-summary.html
 Google Reader API: http://code.google.com/p/pyrfeed/wiki/GoogleReaderAPI
