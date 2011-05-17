@@ -49,9 +49,8 @@ package puremvc.mediator
 			switch(notificationName)
 			{
 				case NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES:
-					//TODO: Request Specific Subscription
 					this.subscription = notificationBody as Subscription;
-					readerClient.getArticles({});
+					readerClient.getArticles({feed:this.subscription.id});
 					break;
 				case NotificationNames.GREADER_ARTICLES_SUCCESS:
 					this.reloadArticles();

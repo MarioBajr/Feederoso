@@ -31,6 +31,7 @@ package puremvc.service
 		private static const TOKEN_URL:String =  READER_URL + '/api/0/token';
 		private static const USER_INFO_URL:String =  READER_URL + '/api/0/user-info';
 		private static const SUBSCRIPTION_LIST_URL:String =  READER_URL + '/api/0/subscription/list';
+		private static const READING_SUBS_URL:String =  READER_URL + '/atom/';
 		private static const READING_URL:String =  READER_URL + '/atom/user/-/state/com.google/reading-list';
 		private static const READ_ITEMS_URL:String =  READER_URL + '/atom/user/-/state/com.google/read';
 		private static const SUBSCRIPTION_URL:String =  READER_URL + '/api/0/subscription/quickadd?client=' + SOURCE;
@@ -372,7 +373,11 @@ package puremvc.service
 				var subfeed:String = params['sf'] as String;
 				var ot:int = params['ot'] as int;
 				var ar:int = params['ar'] as int;
+				var feed:String = params['feed'] as String;
+				
 				var finalurl:String = READING_URL;
+				if(params.hasOwnProperty("feed"))
+					finalurl = READING_SUBS_URL + feed;
 				var exclude_tag_param:String = 'user/' + _USERID +  '/state/com.google/read';
 				actualParams["n"] = FEED_ITEMS_COUNT;
 				actualParams["r"] = "n";
