@@ -17,6 +17,7 @@ package puremvc.mediator
 	
 	import qnx.ui.data.DataProvider;
 	import qnx.ui.data.SectionDataProvider;
+	import qnx.ui.events.ListEvent;
 	
 	import utils.ObjectUtil;
 	
@@ -27,6 +28,8 @@ package puremvc.mediator
 		public function UserInfoMediator(viewComponent:Object=null)
 		{
 			super(NAME, viewComponent);
+			
+			this.view.subscriptionsSectionList.addEventListener(ListEvent.ITEM_CLICKED, onItemClicked);
 		}
 		
 		public static function get NAME():String
@@ -91,6 +94,15 @@ package puremvc.mediator
 			}
 			
 			this.view.subscriptionsSectionList.dataProvider = sectionDP;
+		}
+		
+		private function onItemClicked(event:ListEvent):void
+		{
+			if(event.data is Subscription)
+			{
+				var subscription:Subscription = event.data as Subscription;
+				facade.sendNotification( NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES, subscription);
+			}
 		}
 		
 		/**

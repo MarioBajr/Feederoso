@@ -14,8 +14,12 @@ package puremvc
 //		public static const GREADER_MARK_ALL_READ:String = "GREADER_MARK_ALL_READ";
 //		public static const GREADER_ADD_SUB:String = "GREADER_ADD_SUB";
 		
+		public static const REQUEST_SUBSCRIPTION_ARTICLES:String = "REQUEST_SUBSCRIPTION_ARTICLES";
+		
+		public static const GREADER_ARTICLES_SUCCESS:String = "GREADER_ARTICLES_SUCCESS";
 		public static const GREADER_SUBSCRIPTIONS_SUCCESS:String = "GREADER_SUBSCRIPTIONS_SUCCESS";
-		public static const GREADER_SUBSCRIPTIONS_FAIL:String = "GREADER_SUBSCRIPTIONS_FAIL";
+		
+		public static const GREADER_FAIL:String = "GREADER_FAIL";
 		
 		public static const GREADER_LOGIN_SUCCESS:String = "GREADER_LOGIN_SUCCESS";
 		public static const GREADER_LOGIN_FAIL:String = "GREADER_LOGIN_FAIL";

@@ -22,7 +22,6 @@ package utils
 		{
 			var className:String = getQualifiedClassName( obj );
 			registerClassAlias(className, obj);
-			trace(className);
 			return className;
 		}
 		

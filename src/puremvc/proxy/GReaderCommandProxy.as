@@ -2,6 +2,7 @@ package puremvc.proxy
 {
 	import flash.net.getClassByAlias;
 	
+	import mx.rpc.events.ResultEvent;
 	import mx.utils.UIDUtil;
 	
 	import org.puremvc.as3.patterns.proxy.Proxy;
@@ -31,12 +32,12 @@ package puremvc.proxy
 		{
 			this.action = action;
 			super( UIDUtil.createUID(), data);
-			
-			trace(action, data);
 		}
 		
 		public function result(value:Object):void
 		{
+			trace("GReaderCommandResult Begin [", this.action, "] --------");
+			
 			var success:Boolean = true;
 			var errorMessage:String = null;
 			
@@ -47,11 +48,9 @@ package puremvc.proxy
 				ObjectUtil.deepTrace(value);
 			}
 			
-			
 			switch(this.action)
 			{
 				case GREADER_LOGIN:
-					ObjectUtil.deepTrace(value);
 					if(success)
 						facade.sendNotification( NotificationNames.GREADER_LOGIN_SUCCESS );
 					else
@@ -59,23 +58,43 @@ package puremvc.proxy
 					
 					break;
 				case GREADER_SUBS:
-					//Register Subs
 					if(success)
 					{
 						subscriptionsProxy.setData( value.result );
 						facade.sendNotification( NotificationNames.GREADER_SUBSCRIPTIONS_SUCCESS );
 					}
+					else
+						facade.sendNotification( NotificationNames.GREADER_FAIL );
 					
 					break;
+				
+				case GREADER_GET:
+					if(success)
+					{
+						var resultEvent:ResultEvent = value as ResultEvent;
+						articlesProxy.setData( resultEvent.result );
+						facade.sendNotification( NotificationNames.GREADER_ARTICLES_SUCCESS );
+					}
+					else
+						facade.sendNotification( NotificationNames.GREADER_FAIL );
+					
+					break;
+				
+				case GREADER_UNREAD:
+					ObjectUtil.deepTrace(value);
+					break;
+				
 				default:
 					break;
 			}
 			trace(value);
+			
+			trace("-------- GReaderCommandResult End");
 		}
 		
 		public function fault(value:Object):void
 		{
-			trace("FAIL: ");
+			trace("Connection FAIL [", this.action, "]");
 			ObjectUtil.deepTrace(value);
 		}
 		
@@ -86,6 +105,11 @@ package puremvc.proxy
 		private function get subscriptionsProxy():SubscriptionsProxy
 		{
 			return fetchOrCreateProxyByName(SubscriptionsProxy.NAME) as SubscriptionsProxy;
+		}
+		
+		private function get articlesProxy():ArticlesProxy
+		{
+			return fetchOrCreateProxyByName(ArticlesProxy.NAME) as ArticlesProxy;
 		}
 		
 		/**

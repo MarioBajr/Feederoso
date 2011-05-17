@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		xmlns:s="library://ns.adobe.com/flex/spark"
-		creationComplete="onCreationComplete(event)"
-		>
+		creationComplete="onCreationComplete(event)">
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
@@ -13,35 +12,33 @@
 			import mx.events.ResizeEvent;
 			
 			import puremvc.ApplicationFacade;
-			import puremvc.mediator.UserInfoMediator;
+			import puremvc.mediator.ArticlesMediator;
 			
-			import qnx.ui.listClasses.ListSelectionMode;
-			import qnx.ui.listClasses.SectionList;
+			import qnx.ui.listClasses.List;
 			
-			public var subscriptionsSectionList:SectionList;
+			public var articlesList:List;
 			
 			private function onCreationComplete(event:FlexEvent):void
 			{
-				this.subscriptionsSectionList = new SectionList();
-				this.subscriptionsSectionList.headerHeight = 40;
-				this.subscriptionsSectionList.selectionMode = ListSelectionMode.SINGLE;
-				this.visualID.addChild( this.subscriptionsSectionList );
+				this.articlesList = new List();
+				this.visualID.addChild( this.articlesList );
 				
 				this.addEventListener(ResizeEvent.RESIZE, onResize);
 				this.onResize(null);
 				
 				//Register Application Mediator
-				ApplicationFacade.getInstance().registerMediator( new UserInfoMediator( this ) );
+				ApplicationFacade.getInstance().registerMediator( new ArticlesMediator( this ) );
 			}
 			
 			private function onResize(event:ResizeEvent):void
 			{
-				this.subscriptionsSectionList.width = visualID.width;
-				this.subscriptionsSectionList.height = visualID.height;
+				this.articlesList.width = visualID.width;
+				this.articlesList.height = visualID.height;
 			}
 			
 		]]>
 	</fx:Script>
 	
 	<s:SpriteVisualElement id="visualID" width="100%" height="100%"/>
+	
 </s:HGroup>

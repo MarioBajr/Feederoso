@@ -197,7 +197,6 @@ package puremvc.mediator
 		
 		private function get readerClient():GReaderClient
 		{
-			trace("Searching Here");
 			return facade.retrieveProxy( GReaderProxy.NAME ).getData() as GReaderClient;
 		}
 	}

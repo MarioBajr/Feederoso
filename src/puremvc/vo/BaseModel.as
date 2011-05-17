@@ -5,13 +5,7 @@ package puremvc.vo
 
 	public class BaseModel
 	{
-		public var id:String;//Identifier
-		protected static var _all:Dictionary;
-		
-		public function BaseModel()
-		{
-			
-		}
+		public function BaseModel(){}
 		
 		/**
 		 *  SetUp Model
