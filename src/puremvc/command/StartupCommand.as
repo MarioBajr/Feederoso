@@ -9,7 +9,7 @@ package puremvc.command
 	{	
 		override public function execute(notification:INotification):void
 		{
-			this.facade.registerProxy( new GReaderProxy() );
+			
 		}
 	}
 }

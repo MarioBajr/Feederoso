@@ -1,5 +1,10 @@
 package puremvc.mediator
 {
+	import com.adobe.protocols.dict.Dict;
+	import com.adobe.utils.DictionaryUtil;
+	
+	import flash.utils.Dictionary;
+	
 	import org.puremvc.as3.interfaces.INotification;
 	import org.puremvc.as3.patterns.mediator.Mediator;
 	
@@ -7,8 +12,11 @@ package puremvc.mediator
 	import puremvc.proxy.GReaderProxy;
 	import puremvc.proxy.SubscriptionsProxy;
 	import puremvc.service.GReaderClient;
+	import puremvc.vo.Label;
+	import puremvc.vo.Subscription;
 	
 	import qnx.ui.data.DataProvider;
+	import qnx.ui.data.SectionDataProvider;
 	
 	import utils.ObjectUtil;
 	
@@ -60,7 +68,29 @@ package puremvc.mediator
 		
 		private function reloadSubscriptions():void
 		{
-			this.view.subscriptionsList.dataProvider = new DataProvider(subscriptionsProxy.subscriptionsList);
+			var subscriptions:Array = subscriptionsProxy.subscriptionsList;
+			var labels:Array = DictionaryUtil.getValues(subscriptionsProxy.labelsDict);
+			var sectionById:Dictionary = new Dictionary();
+			
+			var sectionDP:SectionDataProvider = new SectionDataProvider();
+			for each(var label:Label in labels)
+			{
+				var section:Object = new Object();
+				section.label = label.title;
+				sectionById[label.id] = section;
+				sectionDP.addItem( section );
+			}
+			
+			for each(var sub:Subscription in subscriptions)
+			{
+				for each(label in sub.categories)
+				{
+					section = sectionById[label.id];
+					sectionDP.addChildToItem(sub, section);
+				}
+			}
+			
+			this.view.subscriptionsSectionList.dataProvider = sectionDP;
 		}
 		
 		/**

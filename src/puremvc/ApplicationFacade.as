@@ -36,6 +36,8 @@ package puremvc
 		override protected function initializeModel():void
 		{
 			super.initializeModel();
+			
+			registerProxy( new GReaderProxy() );
 		}
 		
 		/**

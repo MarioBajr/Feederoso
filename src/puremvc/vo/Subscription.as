@@ -2,7 +2,6 @@ package puremvc.vo
 {
 	public class Subscription extends BaseModel
 	{
-		public var id:String;
 		public var title:String;
 		public var categories:Array;
 		public var sortid:String;

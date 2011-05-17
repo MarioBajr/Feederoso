@@ -17,13 +17,15 @@
 			
 			import qnx.ui.data.DataProvider;
 			import qnx.ui.listClasses.List;
+			import qnx.ui.listClasses.SectionList;
 			
-			public var subscriptionsList:List;
+			public var subscriptionsSectionList:SectionList;
 			
 			private function onCreationComplete(event:FlexEvent):void
 			{
-				this.subscriptionsList = new List();
-				this.visualID.addChild( this.subscriptionsList );
+				this.subscriptionsSectionList = new SectionList();
+				this.subscriptionsSectionList.headerHeight = 40;
+				this.visualID.addChild( this.subscriptionsSectionList );
 				
 				this.addEventListener(ResizeEvent.RESIZE, onResize);
 				this.onResize(null);
@@ -34,8 +36,8 @@
 			
 			private function onResize(event:ResizeEvent):void
 			{
-				this.subscriptionsList.width = visualID.width;
-				this.subscriptionsList.height = visualID.height;
+				this.subscriptionsSectionList.width = visualID.width;
+				this.subscriptionsSectionList.height = visualID.height;
 			}
 			
 		]]>

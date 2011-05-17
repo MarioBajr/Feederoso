@@ -1,10 +1,21 @@
 package puremvc.vo
 {
+	import flash.utils.Dictionary;
+	
+
 	public class BaseModel
 	{
+		public var id:String;//Identifier
+		protected static var _all:Dictionary;
+		
 		public function BaseModel()
 		{
+			
 		}
+		
+		/**
+		 *  SetUp Model
+		 **/
 		
 		public function setUpModelWithXML(xml:XML):void
 		{

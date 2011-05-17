@@ -2,6 +2,9 @@ package puremvc.mediator
 {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.NetStatusEvent;
+	import flash.net.SharedObject;
+	import flash.net.SharedObjectFlushStatus;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
@@ -28,12 +31,26 @@ package puremvc.mediator
 	import views.FeederosoHome;
 	
 	public class HomeMediator extends Mediator
-	{	
+	{
+		private var sharedObject:SharedObject;
+		
 		public function HomeMediator(viewComponent:Object=null)
 		{
 			super(NAME, viewComponent);
 			
-			showLoginDialog();
+			this.sharedObject = SharedObject.getLocal("feederoso-auth");
+			//this.sharedObject.clear();
+			
+			if(this.sharedObject.data.password)
+			{
+				//Using SharedObject to authenticate
+				this.authenticate();
+			}
+			else
+			{
+				//Ask to authenticate
+				showLoginDialog();
+			}
 		}
 		
 		public static function get NAME():String
@@ -48,6 +65,7 @@ package puremvc.mediator
 		override public function listNotificationInterests():Array
 		{
 			return [
+				NotificationNames.GREADER_LOGIN_SUCCESS,
 				NotificationNames.GREADER_LOGIN_FAIL
 			];
 		}
@@ -59,7 +77,13 @@ package puremvc.mediator
 			
 			switch(notificationName)
 			{
+				case NotificationNames.GREADER_LOGIN_SUCCESS:
+					this.saveSharedObject();
+					break;
+				
 				case NotificationNames.GREADER_LOGIN_FAIL:
+					sharedObject.clear();
+					
 					showErrorDialog(notificationBody as String);
 					break;
 			}
@@ -76,7 +100,8 @@ package puremvc.mediator
 			loginDialog.addButton("Login");
 			loginDialog.usernameLabel = "Email";
 			loginDialog.passwordPrompt = "Password";
-			loginDialog.rememberMe = false;
+			loginDialog.rememberMeLabel = "Remember Me"
+			loginDialog.rememberMe = true;
 			loginDialog.dialogSize = DialogSize.SIZE_SMALL;
 			loginDialog.addEventListener(Event.SELECT, onLoginDialogSelect);
 			loginDialog.show( IowWindow.getAirWindow().group);
@@ -97,13 +122,68 @@ package puremvc.mediator
 		{
 			var loginDialog:LoginDialog = event.target as LoginDialog;
 			
+			if(loginDialog.rememberMe)
+			{
+				sharedObject.data.username = loginDialog.username;
+				sharedObject.data.password = loginDialog.password;
+			}
+			
+			this.authenticate(loginDialog.username, loginDialog.password);
+		}
+		
+		private function authenticate(username:String=null, password:String=null):void
+		{
+			if(username == null && password == null)
+			{
+				username = this.sharedObject.data.username;
+				password = this.sharedObject.data.password;
+			}
+			
 			if(!readerClient.connected)
-				readerClient.authenticate(loginDialog.username, loginDialog.password);
+				readerClient.authenticate(username, password);
 		}
 		
 		private function onErrorDialogSelect(event:Event):void
 		{
 			this.showLoginDialog();
+		}
+		
+		/**
+		 * Shared Object Logic
+		 **/
+		
+		private function saveSharedObject():void
+		{
+			var flushStatus:String = null;
+			try {
+				flushStatus = sharedObject.flush(10000);
+			} catch (error:Error) {
+				trace("Error...Could not write SharedObject to disk\n");
+			}
+			if (flushStatus != null) {
+				switch (flushStatus) {
+					case SharedObjectFlushStatus.PENDING:
+						sharedObject.addEventListener(NetStatusEvent.NET_STATUS, onFlushStatus);
+						break;
+					case SharedObjectFlushStatus.FLUSHED:
+						//Saved
+						break;
+				}
+			}
+		}
+		
+		private function onFlushStatus(event:NetStatusEvent):void
+		{
+			switch (event.info.code) {
+				case "SharedObject.Flush.Success":
+					trace("User granted permission -- value saved.\n");
+					break;
+				case "SharedObject.Flush.Failed":
+					trace("User denied permission -- value not saved.\n");
+					break;
+			}
+			
+			sharedObject.removeEventListener(NetStatusEvent.NET_STATUS, onFlushStatus);
 		}
 		
 		/**
@@ -117,6 +197,7 @@ package puremvc.mediator
 		
 		private function get readerClient():GReaderClient
 		{
+			trace("Searching Here");
 			return facade.retrieveProxy( GReaderProxy.NAME ).getData() as GReaderClient;
 		}
 	}

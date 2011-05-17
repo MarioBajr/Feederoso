@@ -1,10 +1,14 @@
 package puremvc.proxy
 {
+	import com.adobe.utils.DictionaryUtil;
+	
 	import flash.net.registerClassAlias;
+	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 	
 	import org.puremvc.as3.patterns.proxy.Proxy;
 	
+	import puremvc.vo.Label;
 	import puremvc.vo.Subscription;
 	
 	import utils.ObjectUtil;
@@ -12,6 +16,7 @@ package puremvc.proxy
 	public class SubscriptionsProxy extends Proxy
 	{
 		public var subscriptionsList:Array;
+		public var labelsDict:Dictionary;
 		
 		public function SubscriptionsProxy()
 		{
@@ -28,12 +33,18 @@ package puremvc.proxy
 			super.setData( data );
 			
 			this.subscriptionsList = new Array();
+			this.labelsDict = new Dictionary();
 			
 			var xml:XML = data as XML;
 			for each(var item:XML in xml.list.object)
 			{
 				var sub:Subscription = new Subscription();
 				sub.setUpModelWithXML( item );
+				
+				for each(var label:Label in sub.categories)
+				{
+					this.labelsDict[label.id] = label;
+				}
 				
 				this.subscriptionsList.push( sub );
 			}
