@@ -1,11 +1,11 @@
 package puremvc.vo
 {
-	public class Label extends BaseModel
+	public class Tag extends BaseModel
 	{
 		public var id:String;
 		public var label:String;
 		
-		public function Label(){}
+		public function Tag(){}
 		
 		public function get title():String
 		{

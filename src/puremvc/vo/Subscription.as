@@ -13,7 +13,7 @@ package puremvc.vo
 		override public function classByLabel(label:String):Class
 		{
 			if (label == "categories")
-				return Label;
+				return Tag;
 			
 			return null;
 		}

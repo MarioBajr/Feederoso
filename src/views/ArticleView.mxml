@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  creationComplete="onCreationComplete(event)">
+	<fx:Script>
+		<![CDATA[
+			import flashx.textLayout.formats.TextAlign;
+			
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			
+			import puremvc.ApplicationFacade;
+			import puremvc.mediator.ArticleListMediator;
+			import puremvc.mediator.ArticleMediator;
+			
+			import qnx.ui.listClasses.AlternatingCellRenderer;
+			import qnx.ui.listClasses.List;
+			import qnx.ui.listClasses.ListSelectionMode;
+			import qnx.ui.listClasses.ScrollDirection;
+			import qnx.ui.listClasses.ScrollPane;
+			import qnx.ui.text.Label;
+			
+			import utils.LabelUtil;
+			
+			import views.cells.ArticleCell;
+			
+			private var contentView:Sprite;
+			private var titleView:Sprite;
+			private var scrollPane:ScrollPane;
+			private var label:Label;
+			private var title:Label;
+			
+			private const PADDING:uint = 5;
+			private const TOP:uint = 20;
+			private const TITLE_MARGIN:uint = 15;
+			private const MARGIN:uint = 10;
+			private const GAP:uint = 30;
+			
+			private function onCreationComplete(event:FlexEvent):void
+			{
+				this.contentView = new Sprite();
+				this.visualID.addChild( this.contentView );
+				
+				this.scrollPane = new ScrollPane();
+				this.scrollPane.scrollDirection = ScrollDirection.VERTICAL;
+				this.visualID.addChild( this.scrollPane );
+				
+				this.titleView = new Sprite();
+				this.titleView.graphics.beginFill( 0xcccccc);
+				this.titleView.graphics.drawRect( 0, 0, 1, 1);
+				this.titleView.graphics.endFill();
+				this.contentView.addChild( this.titleView );
+				
+				var textFormat:TextFormat = new TextFormat(null, 20, 0x000000);
+				textFormat.align = TextFormatAlign.CENTER;
+				
+				this.title = new Label();
+				this.title.format = textFormat;
+				this.title.x = TITLE_MARGIN;
+				this.title.y = TOP;
+				this.title.wordWrap = true;
+				this.contentView.addChild( this.title );
+				
+				this.label = new Label();
+				this.label.x = MARGIN;
+				this.label.wordWrap = true;
+				this.contentView.addChild( this.label );
+				
+				this.addEventListener(ResizeEvent.RESIZE, onResize);
+				this.onResize(null);
+				
+				//Register Application Mediator
+				ApplicationFacade.getInstance().registerMediator( new ArticleMediator( this ) );
+			}
+			
+			public function setArticle(title:String, text:String):void
+			{
+				this.title.htmlText = title;
+				this.title.height = LabelUtil.labelHeightForText( title, this.title.width, this.title.format );
+				this.titleView.height = this.title.height + 2*PADDING;
+				
+				this.label.htmlText = text;
+				this.label.y = this.title.y + this.title.height + GAP;
+				this.label.height = LabelUtil.labelHeightForText( text, this.label.width );
+				
+				this.scrollPane.setScrollContent( this.contentView );
+			}
+			
+			private function onResize(event:ResizeEvent):void
+			{
+				this.scrollPane.width = visualID.width;
+				this.scrollPane.height = visualID.height;
+				
+				this.title.width = visualID.width - 2*TITLE_MARGIN;
+				this.label.width = visualID.width - 2*MARGIN;
+				
+				this.titleView.x = this.title.x - PADDING;
+				this.titleView.y = this.title.y - PADDING;
+				this.titleView.width = this.title.width + 2*PADDING;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Group width="100%" height="100%">
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor color="0xFFFFFF"/>
+			</s:fill>
+		</s:Rect>
+		<s:SpriteVisualElement id="visualID" width="100%" height="100%"/>
+	</s:Group>
+	
+</s:VGroup>

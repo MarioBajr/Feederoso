@@ -1,5 +1,7 @@
 package puremvc.vo
 {
+	import utils.ObjectUtil;
+
 	public class Article extends BaseModel
 	{
 		public var data:Object;
@@ -24,6 +26,21 @@ package puremvc.vo
 			return null;
 		}
 		
+		public function get desription():String
+			
+		{
+			if(this.data)
+			{
+				if(this.data.hasOwnProperty("summary"))
+					return this.data.summary.toString();
+				
+				if(this.data.hasOwnProperty("content"))
+					return this.data.content.toString();
+			}
+			
+			ObjectUtil.deepTrace(this.data);
+			return null;
+		}
 		
 	}
 }

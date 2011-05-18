@@ -18,12 +18,16 @@
 			import qnx.ui.listClasses.ListSelectionMode;
 			import qnx.ui.listClasses.SectionList;
 			
+			import views.cells.SubscriptionCell;
+			
 			public var subscriptionsSectionList:SectionList;
 			
 			private function onCreationComplete(event:FlexEvent):void
 			{
 				this.subscriptionsSectionList = new SectionList();
 				this.subscriptionsSectionList.headerHeight = 40;
+				this.subscriptionsSectionList.allowDeselect = false;
+				this.subscriptionsSectionList.setSkin(SubscriptionCell);
 				this.subscriptionsSectionList.selectionMode = ListSelectionMode.SINGLE;
 				this.visualID.addChild( this.subscriptionsSectionList );
 				

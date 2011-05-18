@@ -12,8 +12,8 @@ package puremvc.mediator
 	import puremvc.proxy.GReaderProxy;
 	import puremvc.proxy.SubscriptionsProxy;
 	import puremvc.service.GReaderClient;
-	import puremvc.vo.Label;
 	import puremvc.vo.Subscription;
+	import puremvc.vo.Tag;
 	
 	import qnx.ui.data.DataProvider;
 	import qnx.ui.data.SectionDataProvider;
@@ -25,6 +25,8 @@ package puremvc.mediator
 	
 	public class UserInfoMediator extends Mediator
 	{
+		private var lastIdentifier:String;
+		
 		public function UserInfoMediator(viewComponent:Object=null)
 		{
 			super(NAME, viewComponent);
@@ -72,23 +74,23 @@ package puremvc.mediator
 		private function reloadSubscriptions():void
 		{
 			var subscriptions:Array = subscriptionsProxy.subscriptionsList;
-			var labels:Array = DictionaryUtil.getValues(subscriptionsProxy.labelsDict);
+			var tags:Array = DictionaryUtil.getValues(subscriptionsProxy.tagDict);
 			var sectionById:Dictionary = new Dictionary();
 			
 			var sectionDP:SectionDataProvider = new SectionDataProvider();
-			for each(var label:Label in labels)
+			for each(var tag:Tag in tags)
 			{
 				var section:Object = new Object();
-				section.label = label.title;
-				sectionById[label.id] = section;
+				section.label = tag.title;
+				sectionById[tag.id] = section;
 				sectionDP.addItem( section );
 			}
 			
 			for each(var sub:Subscription in subscriptions)
 			{
-				for each(label in sub.categories)
+				for each(tag in sub.categories)
 				{
-					section = sectionById[label.id];
+					section = sectionById[tag.id];
 					sectionDP.addChildToItem(sub, section);
 				}
 			}
@@ -101,7 +103,11 @@ package puremvc.mediator
 			if(event.data is Subscription)
 			{
 				var subscription:Subscription = event.data as Subscription;
-				facade.sendNotification( NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES, subscription);
+				
+				if (lastIdentifier != subscription.id)
+					facade.sendNotification( NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES, subscription);
+				
+				this.lastIdentifier = subscription.id;
 			}
 		}
 		

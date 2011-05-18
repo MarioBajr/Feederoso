@@ -15,6 +15,7 @@ package puremvc
 //		public static const GREADER_ADD_SUB:String = "GREADER_ADD_SUB";
 		
 		public static const REQUEST_SUBSCRIPTION_ARTICLES:String = "REQUEST_SUBSCRIPTION_ARTICLES";
+		public static const SHOW_ARTICLE_VIEW:String = "SHOW_ARTICLE_VIEW";
 		
 		public static const GREADER_ARTICLES_SUCCESS:String = "GREADER_ARTICLES_SUCCESS";
 		public static const GREADER_SUBSCRIPTIONS_SUCCESS:String = "GREADER_SUBSCRIPTIONS_SUCCESS";

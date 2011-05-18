@@ -7,26 +7,31 @@ package puremvc.mediator
 	import puremvc.proxy.ArticlesProxy;
 	import puremvc.proxy.GReaderProxy;
 	import puremvc.service.GReaderClient;
+	import puremvc.vo.Article;
 	import puremvc.vo.Subscription;
 	
 	import qnx.ui.data.DataProvider;
+	import qnx.ui.events.ListEvent;
 	
 	import utils.ObjectUtil;
 	
-	import views.ArticlesView;
+	import views.ArticleListView;
 	
-	public class ArticlesMediator extends Mediator
+	public class ArticleListMediator extends Mediator
 	{
 		private var subscription:Subscription;
+		private var lastIdentifier:String;
 		
-		public function ArticlesMediator(viewComponent:Object=null)
+		public function ArticleListMediator(viewComponent:Object=null)
 		{
 			super(NAME, viewComponent);
+			
+			this.view.articlesList.addEventListener(ListEvent.ITEM_CLICKED, onItemClicked);
 		}
 		
 		public static function get NAME():String
 		{
-			return ObjectUtil.getClassName( ArticlesMediator );
+			return ObjectUtil.getClassName( ArticleListMediator );
 		}
 		
 		/**
@@ -51,6 +56,7 @@ package puremvc.mediator
 				case NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES:
 					this.subscription = notificationBody as Subscription;
 					readerClient.getArticles({feed:this.subscription.id});
+					this.clearArticles();
 					break;
 				case NotificationNames.GREADER_ARTICLES_SUCCESS:
 					this.reloadArticles();
@@ -68,13 +74,32 @@ package puremvc.mediator
 			this.view.articlesList.dataProvider = new DataProvider(articles);
 		}
 		
+		private function clearArticles():void
+		{
+			this.view.articlesList.selectedIndex = -1;
+			this.view.articlesList.dataProvider = new DataProvider();
+		}
+		
+		private function onItemClicked(event:ListEvent):void
+		{
+			if(event.data is Article)
+			{
+				var article:Article = event.data as Article;
+				
+				if(lastIdentifier != article.id)
+					facade.sendNotification( NotificationNames.SHOW_ARTICLE_VIEW, article);
+				
+				lastIdentifier = article.id;
+			}
+		}
+		
 		/**
 		 * Getters and Setters
 		 **/
 		
-		public function get view():ArticlesView
+		public function get view():ArticleListView
 		{
-			return this.getViewComponent() as ArticlesView;
+			return this.getViewComponent() as ArticleListView;
 		}
 		
 		private function get readerClient():GReaderClient

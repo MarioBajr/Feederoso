@@ -8,7 +8,7 @@ package puremvc.proxy
 	
 	import org.puremvc.as3.patterns.proxy.Proxy;
 	
-	import puremvc.vo.Label;
+	import puremvc.vo.Tag;
 	import puremvc.vo.Subscription;
 	
 	import utils.ObjectUtil;
@@ -16,7 +16,7 @@ package puremvc.proxy
 	public class SubscriptionsProxy extends Proxy
 	{
 		public var subscriptionsList:Array;
-		public var labelsDict:Dictionary;
+		public var tagDict:Dictionary;
 		
 		public function SubscriptionsProxy()
 		{
@@ -33,7 +33,7 @@ package puremvc.proxy
 			super.setData( data );
 			
 			this.subscriptionsList = new Array();
-			this.labelsDict = new Dictionary();
+			this.tagDict = new Dictionary();
 			
 			var xml:XML = data as XML;
 			for each(var item:XML in xml.list.object)
@@ -41,9 +41,9 @@ package puremvc.proxy
 				var sub:Subscription = new Subscription();
 				sub.setUpModelWithXML( item );
 				
-				for each(var label:Label in sub.categories)
+				for each(var label:Tag in sub.categories)
 				{
-					this.labelsDict[label.id] = label;
+					this.tagDict[label.id] = label;
 				}
 				
 				this.subscriptionsList.push( sub );
