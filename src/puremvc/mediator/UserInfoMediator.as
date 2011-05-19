@@ -77,6 +77,8 @@ package puremvc.mediator
 			var tags:Array = DictionaryUtil.getValues(subscriptionsProxy.tagDict);
 			var sectionById:Dictionary = new Dictionary();
 			
+			tags.sortOn(["title"], [Array.DESCENDING]);
+			
 			var sectionDP:SectionDataProvider = new SectionDataProvider();
 			for each(var tag:Tag in tags)
 			{

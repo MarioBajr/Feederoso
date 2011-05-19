@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		xmlns:s="library://ns.adobe.com/flex/spark"
 		creationComplete="onCreationComplete(event)"
 		>
@@ -15,12 +15,19 @@
 			import puremvc.ApplicationFacade;
 			import puremvc.mediator.UserInfoMediator;
 			
+			import qnx.ui.buttons.Button;
 			import qnx.ui.listClasses.ListSelectionMode;
 			import qnx.ui.listClasses.SectionList;
+			import qnx.ui.skins.buttons.BackButtonSkinBlack;
+			import qnx.ui.text.Label;
 			
 			import views.cells.SubscriptionCell;
 			
 			public var subscriptionsSectionList:SectionList;
+			public var logoutButton:Button;
+			public var userLabel:Label;
+			
+			private const MARGIN:uint = 5;
 			
 			private function onCreationComplete(event:FlexEvent):void
 			{
@@ -31,21 +38,47 @@
 				this.subscriptionsSectionList.selectionMode = ListSelectionMode.SINGLE;
 				this.visualID.addChild( this.subscriptionsSectionList );
 				
-				this.addEventListener(ResizeEvent.RESIZE, onResize);
-				this.onResize(null);
+				this.logoutButton = new Button();
+				this.logoutButton.setSkin(BackButtonSkinBlack);
+				this.logoutButton.setSize( 42, 40 );
+				this.logoutToolbarID.addChild( this.logoutButton );
+				
+				this.userLabel = new Label();
+				this.userLabel.x = MARGIN;
+				this.userLabel.y = MARGIN;
+				this.userLabel.text = "Mário Barbosa";
+				this.nameToolbarID.addChild( this.userLabel );
+				
+				this.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete);
+				this.onUpdateComplete(null);
 				
 				//Register Application Mediator
 				ApplicationFacade.getInstance().registerMediator( new UserInfoMediator( this ) );
 			}
 			
-			private function onResize(event:ResizeEvent):void
+			private function onUpdateComplete(event:FlexEvent):void
 			{
 				this.subscriptionsSectionList.width = visualID.width;
 				this.subscriptionsSectionList.height = visualID.height;
+				
+				this.userLabel.width = nameToolbarID.width - 2*MARGIN;
+				this.userLabel.height = nameToolbarID.height;
 			}
 			
 		]]>
 	</fx:Script>
 	
+	<s:Group width="100%" height="40">
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor color="0xCCCCCC"/>
+			</s:fill>
+		</s:Rect>
+		<s:HGroup width="100%" height="100%">
+			<s:SpriteVisualElement id="logoutToolbarID" width="20%" height="100%"/>
+			<s:SpriteVisualElement id="nameToolbarID" width="100%" height="100%"/>
+		</s:HGroup>
+	</s:Group>
+	
 	<s:SpriteVisualElement id="visualID" width="100%" height="100%"/>
-</s:HGroup>
+</s:VGroup>
