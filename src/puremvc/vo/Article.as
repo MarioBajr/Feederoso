@@ -1,5 +1,9 @@
 package puremvc.vo
 {
+	import flash.utils.getQualifiedClassName;
+	
+	import mx.collections.ArrayCollection;
+	
 	import utils.ObjectUtil;
 
 	public class Article extends BaseModel
@@ -47,9 +51,17 @@ package puremvc.vo
 			if(this.data)
 			{
 				if(this.data.hasOwnProperty("link"))
+				{
+					if(this.data.link is ArrayCollection && this.data.link.length > 0)
+						if(this.data.link[0].hasOwnProperty("href"))
+							return this.data.link[0].href.toString();
+					
 					if(this.data.link.hasOwnProperty("href"))
 						return this.data.link.href.toString();
+				}
 			}
+			
+			ObjectUtil.deepTrace(this.data);
 			
 			return null;
 		}
