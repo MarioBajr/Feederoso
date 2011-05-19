@@ -11,6 +11,8 @@ package views.cells
 	import qnx.ui.skins.SkinStates;
 	import qnx.ui.text.Label;
 	
+	import utils.LabelUtil;
+	
 	public class ArticleCell extends AlternatingCellRenderer
 	{
 		private var titleLabel:Label;
@@ -51,27 +53,31 @@ package views.cells
 			var horizontalMargin:uint = 5;
 			var gap:uint = 0;
 			
+			var maxWidth:Number = width - 2*horizontalMargin;
+			var textHeight:Number;
+			
+			textHeight = LabelUtil.labelHeightForText(this.titleLabel.text, maxWidth, this.titleLabel.format);
+			
 			this.titleLabel.x = horizontalMargin;
 			this.titleLabel.y = topMargin;
-//			this.descriptionLabel.wordWrap = true;
-//			this.descriptionLabel.autoSize = TextFieldAutoSize.LEFT;
+			this.titleLabel.wordWrap = true;
 			this.titleLabel.width = width - 2*horizontalMargin;
-			
+			this.titleLabel.height = Math.min(height, textHeight);
 			
 			this.descriptionLabel.x = horizontalMargin;
-			this.descriptionLabel.y = 30;//this.titleLabel.y + this.titleLabel.height + gap;
+			this.descriptionLabel.y = this.titleLabel.height + gap;
 			this.descriptionLabel.wordWrap = true;
-//			this.descriptionLabel.autoSize = TextFieldAutoSize.LEFT;
 			this.descriptionLabel.width = width - 2*horizontalMargin;
 			this.descriptionLabel.height = height - bottomMargin - this.descriptionLabel.y;
 			
+			this.descriptionLabel.visible = (this.descriptionLabel.y < height);
 		}
 		
 		override public function set data(value:Object):void
 		{
 			var article:Article = value as Article;
 			
-			this.titleLabel.text = article.label;
+			this.titleLabel.htmlText = article.label;
 			this.descriptionLabel.htmlText = article.desription;
 			
 			calculateTextSize();

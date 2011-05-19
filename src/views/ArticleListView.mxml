@@ -26,7 +26,7 @@
 			{
 				this.articlesList = new List();
 				this.articlesList.setSkin(ArticleCell);
-				this.articlesList.rowHeight = 93;
+				this.articlesList.rowHeight = 100;
 				this.articlesList.selectionMode = ListSelectionMode.SINGLE;
 				this.articlesList.allowDeselect = false;
 				this.visualID.addChild( this.articlesList );

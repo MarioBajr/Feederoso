@@ -12,23 +12,34 @@
 			import puremvc.ApplicationFacade;
 			import puremvc.mediator.ArticleListMediator;
 			import puremvc.mediator.ArticleMediator;
+			import puremvc.vo.Article;
 			
+			import qnx.media.QNXStageWebView;
+			import qnx.ui.buttons.Button;
+			import qnx.ui.buttons.IconButton;
 			import qnx.ui.listClasses.AlternatingCellRenderer;
 			import qnx.ui.listClasses.List;
 			import qnx.ui.listClasses.ListSelectionMode;
 			import qnx.ui.listClasses.ScrollDirection;
 			import qnx.ui.listClasses.ScrollPane;
+			import qnx.ui.skins.buttons.BackButtonSkinBlack;
+			import qnx.ui.skins.buttons.ExpandButtonSkinBlack;
+			import qnx.ui.skins.buttons.OutlineButtonSkinBlack;
 			import qnx.ui.text.Label;
 			
 			import utils.LabelUtil;
 			
 			import views.cells.ArticleCell;
 			
-			private var contentView:Sprite;
-			private var titleView:Sprite;
-			private var scrollPane:ScrollPane;
-			private var label:Label;
-			private var title:Label;
+			public var contentView:Sprite;
+			public var titleView:Sprite;
+			public var scrollPane:ScrollPane;
+			public var resume:Label;
+			public var title:Label;
+			
+			public var webView:QNXStageWebView;
+			public var closeButton:IconButton;
+			public var favoriteButton:IconButton;
 			
 			private const PADDING:uint = 5;
 			private const TOP:uint = 20;
@@ -59,49 +70,111 @@
 				this.title.x = TITLE_MARGIN;
 				this.title.y = TOP;
 				this.title.wordWrap = true;
+				this.title.mouseEnabled = false;
+				this.title.mouseChildren = false;
 				this.contentView.addChild( this.title );
 				
-				this.label = new Label();
-				this.label.x = MARGIN;
-				this.label.wordWrap = true;
-				this.contentView.addChild( this.label );
+				this.resume = new Label();
+				this.resume.x = MARGIN;
+				this.resume.wordWrap = true;
+				this.resume.mouseEnabled = false;
+				this.resume.mouseChildren = false;
+				this.contentView.addChild( this.resume );
 				
-				this.addEventListener(ResizeEvent.RESIZE, onResize);
-				this.onResize(null);
+				this.closeButton = new IconButton();
+				this.closeButton.setIcon("assets/close.png");
+				this.closeButton.setSkin(OutlineButtonSkinBlack);
+				this.closeButton.width = 42;
+				this.closeButton.height = 40;
+				this.visualToolbarID.addChild( this.closeButton );
+				
+				this.favoriteButton = new IconButton();
+				this.favoriteButton.setIcon("assets/star.png");
+				this.favoriteButton.setSkin(OutlineButtonSkinBlack);
+				this.favoriteButton.width = 42;
+				this.favoriteButton.height = 40;
+				this.visualToolbarID.addChild( this.favoriteButton );
+				
+				this.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete);
+				this.onUpdateComplete(null);
 				
 				//Register Application Mediator
 				ApplicationFacade.getInstance().registerMediator( new ArticleMediator( this ) );
 			}
 			
-			public function setArticle(title:String, text:String):void
+			public function setArticle(article:Article):void
 			{
-				this.title.htmlText = title;
-				this.title.height = LabelUtil.labelHeightForText( title, this.title.width, this.title.format );
+				this.title.htmlText = article.label;
+				this.title.height = LabelUtil.labelHeightForText( article.label, this.title.width, this.title.format );
 				this.titleView.height = this.title.height + 2*PADDING;
 				
-				this.label.htmlText = text;
-				this.label.y = this.title.y + this.title.height + GAP;
-				this.label.height = LabelUtil.labelHeightForText( text, this.label.width );
+				this.resume.htmlText = article.desription;
+				this.resume.y = this.title.y + this.title.height + GAP;
+				this.resume.height = LabelUtil.labelHeightForText( article.desription, this.resume.width, this.resume.format ) + MARGIN;
 				
 				this.scrollPane.setScrollContent( this.contentView );
+				
+				if(this.webView)
+					this.webView.loadURL(article.link);
 			}
 			
-			private function onResize(event:ResizeEvent):void
+			public function setWebViewMode(enabled:Boolean):void
+			{
+				if(enabled)
+				{
+					if(!this.webView)
+					{
+						this.webView = new QNXStageWebView("ArticleBrowser");
+						this.webView.zoomToFitWidthOnLoad = true;
+						this.webView.blockPopups = true;
+						this.webView.stage = this.stage;
+					}
+					
+					this.closeButton.visible = true;
+				}
+				else
+				{
+					if(this.webView)
+					{
+						this.webView.visible = false;
+						this.webView.dispose();
+						this.webView = null;
+					}
+					
+					this.closeButton.visible = false;
+				}
+			}
+			
+			public function onUpdateComplete(event:FlexEvent):void
 			{
 				this.scrollPane.width = visualID.width;
 				this.scrollPane.height = visualID.height;
 				
 				this.title.width = visualID.width - 2*TITLE_MARGIN;
-				this.label.width = visualID.width - 2*MARGIN;
+				this.resume.width = visualID.width - 2*MARGIN;
 				
 				this.titleView.x = this.title.x - PADDING;
 				this.titleView.y = this.title.y - PADDING;
 				this.titleView.width = this.title.width + 2*PADDING;
+				
+				this.favoriteButton.setPosition( this.visualToolbarID.width - this.favoriteButton.width, 0);
+				
+				if (this.webView)
+				{
+					this.webView.viewPort = this.visualID.getRect( this.stage );
+				}
 			}
-			
 		]]>
 	</fx:Script>
 	
+	<s:Group width="100%" height="40">
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor color="0xCCCCCC"/>
+			</s:fill>
+		</s:Rect>
+		<s:SpriteVisualElement id="visualToolbarID" width="100%" height="100%"/>
+	</s:Group>
 	<s:Group width="100%" height="100%">
 		<s:Rect width="100%" height="100%">
 			<s:fill>

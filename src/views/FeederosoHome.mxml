@@ -35,8 +35,8 @@
 	</fx:Script>
 	
 	<s:HGroup width="100%" height="100%">
-		<views:UserInfoView width="20%" height="100%"/>
-		<views:ArticleListView width="30%" height="100%"/>
-		<views:ArticleView width="50%" height="100%"/>
+		<views:UserInfoView id="userInfoViewID" width="20%" height="100%"/>
+		<views:ArticleListView id="articleListViewID" width="30%" height="100%"/>
+		<views:ArticleView id="articleViewID" width="50%" height="100%"/>
 	</s:HGroup>
 </s:View>

@@ -42,5 +42,16 @@ package puremvc.vo
 			return null;
 		}
 		
+		public function get link():String
+		{
+			if(this.data)
+			{
+				if(this.data.hasOwnProperty("link"))
+					if(this.data.link.hasOwnProperty("href"))
+						return this.data.link.href.toString();
+			}
+			
+			return null;
+		}
 	}
 }

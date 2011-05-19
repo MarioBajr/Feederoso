@@ -66,7 +66,9 @@ package puremvc.mediator
 		{
 			return [
 				NotificationNames.GREADER_LOGIN_SUCCESS,
-				NotificationNames.GREADER_LOGIN_FAIL
+				NotificationNames.GREADER_LOGIN_FAIL,
+				NotificationNames.EXPANDED_ARTICLE_VIEW,
+				NotificationNames.DEFAULT_ARTICLE_VIEW
 			];
 		}
 		
@@ -83,8 +85,19 @@ package puremvc.mediator
 				
 				case NotificationNames.GREADER_LOGIN_FAIL:
 					sharedObject.clear();
-					
 					showErrorDialog(notificationBody as String);
+					break;
+				
+				case NotificationNames.EXPANDED_ARTICLE_VIEW:
+					this.view.userInfoViewID.visible = false;
+					this.view.userInfoViewID.percentWidth = 0;
+					this.view.articleViewID.percentWidth = 70;
+					break;
+				
+				case NotificationNames.DEFAULT_ARTICLE_VIEW:
+					this.view.userInfoViewID.visible = true;
+					this.view.userInfoViewID.percentWidth = 20;
+					this.view.articleViewID.percentWidth = 50;
 					break;
 			}
 		}
