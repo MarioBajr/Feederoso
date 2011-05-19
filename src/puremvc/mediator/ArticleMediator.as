@@ -29,6 +29,7 @@ package puremvc.mediator
 			this.view.titleView.addEventListener(MouseEvent.MOUSE_UP, onTouchEnd);
 			this.view.closeButton.addEventListener(MouseEvent.CLICK, onCloseClick);
 			this.view.setWebViewMode(false);
+			this.clearArticle();
 		}
 		
 		public static function get NAME():String
@@ -43,7 +44,8 @@ package puremvc.mediator
 		override public function listNotificationInterests():Array
 		{
 			return [
-				NotificationNames.SHOW_ARTICLE_VIEW
+				NotificationNames.SHOW_ARTICLE_VIEW,
+				NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES
 			];
 		}
 		
@@ -57,6 +59,10 @@ package puremvc.mediator
 				case NotificationNames.SHOW_ARTICLE_VIEW:
 					this.article = notificationBody as Article;
 					this.view.setArticle(article);
+					break;
+				
+				case NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES:
+					clearArticle();
 					break;
 			}
 		}
@@ -92,7 +98,6 @@ package puremvc.mediator
 			{
 				facade.sendNotification( NotificationNames.EXPANDED_ARTICLE_VIEW );
 				this.view.setWebViewMode( true );
-				trace(this.article.link);
 				this.view.webView.loadURL( this.article.link );
 			}
 		}
@@ -101,6 +106,14 @@ package puremvc.mediator
 		{
 			facade.sendNotification( NotificationNames.DEFAULT_ARTICLE_VIEW );
 			this.view.setWebViewMode(false);
+		}
+		
+		private function clearArticle():void
+		{
+			this.view.title.htmlText = "";
+			this.view.resume.htmlText = "";
+			this.view.contentView.visible = false;
+			this.view.favoriteButton.visible = false;
 		}
 		
 		/**

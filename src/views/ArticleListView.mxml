@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		xmlns:s="library://ns.adobe.com/flex/spark"
 		creationComplete="onCreationComplete(event)">
 	<fx:Declarations>
@@ -17,10 +17,18 @@
 			import qnx.ui.listClasses.AlternatingCellRenderer;
 			import qnx.ui.listClasses.List;
 			import qnx.ui.listClasses.ListSelectionMode;
+			import qnx.ui.text.Label;
+			
+			import utils.LabelUtil;
 			
 			import views.cells.ArticleCell;
 			
 			public var articlesList:List;
+			public var titleLabel:Label;
+			
+			private const FONT:uint = 20;
+			private const MIN_FONT:uint = 16;
+			private const MARGIN:uint = 5;
 			
 			private function onCreationComplete(event:FlexEvent):void
 			{
@@ -31,6 +39,12 @@
 				this.articlesList.allowDeselect = false;
 				this.visualID.addChild( this.articlesList );
 				
+				this.titleLabel = new Label();
+				this.titleLabel.x = MARGIN;
+				this.titleLabel.y = MARGIN;
+				this.titleLabel.format = new TextFormat(null, FONT, 0x000000);
+				this.visualTitleID.addChild( this.titleLabel );
+				
 				this.addEventListener(ResizeEvent.RESIZE, onResize);
 				this.onResize(null);
 				
@@ -38,14 +52,45 @@
 				ApplicationFacade.getInstance().registerMediator( new ArticleListMediator( this ) );
 			}
 			
+			public function setTitleText(value:String):void
+			{
+				var format:TextFormat = this.titleLabel.format;
+				format.align = TextFormatAlign.CENTER;
+				
+				this.titleLabel.text = value;
+				var h:Number = LabelUtil.labelHeightForText( value, this.titleLabel.width, format );
+				
+				if(h > this.titleLabel.height)
+				{
+					format.size = MIN_FONT;
+					this.titleLabel.format = format;
+				}
+				else
+				{
+					format.size = FONT;
+					this.titleLabel.format = format;
+				}
+			}
+			
 			private function onResize(event:ResizeEvent):void
 			{
 				this.articlesList.width = visualID.width;
 				this.articlesList.height = visualID.height;
+				
+				this.titleLabel.width = visualTitleID.width - 2*MARGIN;
 			}
 			
 		]]>
 	</fx:Script>
+	
+	<s:Group width="100%" height="40">
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor color="0xCCCCCC"/>
+			</s:fill>
+		</s:Rect>
+		<s:SpriteVisualElement id="visualTitleID" width="100%" height="100%"/>
+	</s:Group>
 	
 	<s:Group width="100%" height="100%">
 		<s:Rect width="100%" height="100%">
@@ -56,4 +101,4 @@
 		<s:SpriteVisualElement id="visualID" width="100%" height="100%"/>
 	</s:Group>
 	
-</s:HGroup>
+</s:VGroup>

@@ -14,6 +14,7 @@
 			import puremvc.mediator.ArticleMediator;
 			import puremvc.vo.Article;
 			
+			import qnx.events.WebViewEvent;
 			import qnx.media.QNXStageWebView;
 			import qnx.ui.buttons.Button;
 			import qnx.ui.buttons.IconButton;
@@ -22,9 +23,11 @@
 			import qnx.ui.listClasses.ListSelectionMode;
 			import qnx.ui.listClasses.ScrollDirection;
 			import qnx.ui.listClasses.ScrollPane;
+			import qnx.ui.progress.PercentageBar;
 			import qnx.ui.skins.buttons.BackButtonSkinBlack;
 			import qnx.ui.skins.buttons.ExpandButtonSkinBlack;
 			import qnx.ui.skins.buttons.OutlineButtonSkinBlack;
+			import qnx.ui.skins.progress.PercentageBarSkinBlack;
 			import qnx.ui.text.Label;
 			
 			import utils.LabelUtil;
@@ -40,6 +43,9 @@
 			public var webView:QNXStageWebView;
 			public var closeButton:IconButton;
 			public var favoriteButton:IconButton;
+			public var progressBar:PercentageBar;
+			
+			private var progressTimer:Timer;
 			
 			private const PADDING:uint = 5;
 			private const TOP:uint = 20;
@@ -86,14 +92,19 @@
 				this.closeButton.setSkin(OutlineButtonSkinBlack);
 				this.closeButton.width = 42;
 				this.closeButton.height = 40;
-				this.visualToolbarID.addChild( this.closeButton );
+				this.closeToolbarID.addChild( this.closeButton );
 				
 				this.favoriteButton = new IconButton();
 				this.favoriteButton.setIcon("assets/star.png");
 				this.favoriteButton.setSkin(OutlineButtonSkinBlack);
 				this.favoriteButton.width = 42;
 				this.favoriteButton.height = 40;
-				this.visualToolbarID.addChild( this.favoriteButton );
+				this.favoriteToolbarID.addChild( this.favoriteButton );
+				
+				this.progressBar = new PercentageBar();
+				this.progressBar.y = 10;
+				this.progressBar.setSkin( PercentageBarSkinBlack );
+				this.progressToolbarID.addChild( this.progressBar );
 				
 				this.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete);
 				this.onUpdateComplete(null);
@@ -104,6 +115,9 @@
 			
 			public function setArticle(article:Article):void
 			{
+				this.contentView.visible = true;
+				this.favoriteButton.visible = true;
+				
 				this.title.htmlText = article.label;
 				this.title.height = LabelUtil.labelHeightForText( article.label, this.title.width, this.title.format );
 				this.titleView.height = this.title.height + 2*PADDING;
@@ -128,6 +142,9 @@
 						this.webView.zoomToFitWidthOnLoad = true;
 						this.webView.blockPopups = true;
 						this.webView.stage = this.stage;
+						this.webView.addEventListener(WebViewEvent.DOCUMENT_LOAD_FINISHED, onDocumentFinished);
+						this.webView.addEventListener(WebViewEvent.DOCUMENT_LOAD_FAILED, onDocumentFailed);
+						this.webView.addEventListener(WebViewEvent.DOCUMENT_LOAD_COMMITTED, onDocumentLoadCommited);
 					}
 					
 					this.closeButton.visible = true;
@@ -136,12 +153,56 @@
 				{
 					if(this.webView)
 					{
+						this.webView.removeEventListener(WebViewEvent.DOCUMENT_LOAD_FINISHED, onDocumentFinished);
+						this.webView.removeEventListener(WebViewEvent.DOCUMENT_LOAD_FAILED, onDocumentFailed);
+						this.webView.removeEventListener(WebViewEvent.DOCUMENT_LOAD_COMMITTED, onDocumentLoadCommited);
 						this.webView.visible = false;
 						this.webView.dispose();
 						this.webView = null;
 					}
 					
+					onDocumentFinished(null);
 					this.closeButton.visible = false;
+				}
+			}
+			
+			private function onDocumentLoadCommited(event:WebViewEvent):void
+			{
+				this.progressTimer = new Timer(500);
+				this.progressTimer.addEventListener(TimerEvent.TIMER, onTimerTick);
+				this.progressTimer.start();
+				this.progressBar.progress = 0;
+				this.progressBar.visible = true;
+			}
+			
+			private function onDocumentFinished(event:WebViewEvent):void
+			{
+				if(this.progressTimer)
+				{
+					this.progressTimer.removeEventListener(TimerEvent.TIMER, onTimerTick);
+					this.progressTimer.stop();
+					this.progressTimer = null;
+				}
+				
+				this.progressBar.progress = 1;
+				this.progressBar.visible = false;
+			}
+			
+			private function onDocumentFailed(event:WebViewEvent):void
+			{
+				this.onDocumentFinished(null);
+			}
+			
+			private function onTimerTick(event:TimerEvent):void
+			{
+				if(this.webView)
+				{				
+					this.progressBar.progress = this.webView.loadProgress / 100;
+				}
+				else
+				{
+					this.progressTimer.stop();
+					this.progressTimer = null;
 				}
 			}
 			
@@ -157,7 +218,7 @@
 				this.titleView.y = this.title.y - PADDING;
 				this.titleView.width = this.title.width + 2*PADDING;
 				
-				this.favoriteButton.setPosition( this.visualToolbarID.width - this.favoriteButton.width, 0);
+				this.progressBar.setSize( this.progressToolbarID.width, 20);
 				
 				if (this.webView)
 				{
@@ -173,7 +234,11 @@
 				<s:SolidColor color="0xCCCCCC"/>
 			</s:fill>
 		</s:Rect>
-		<s:SpriteVisualElement id="visualToolbarID" width="100%" height="100%"/>
+		<s:HGroup width="100%" height="100%">
+			<s:SpriteVisualElement id="closeToolbarID" width="40" height="100%"/>
+			<s:SpriteVisualElement id="progressToolbarID" width="100%" height="100%"/>
+			<s:SpriteVisualElement id="favoriteToolbarID" width="40" height="100%"/>
+		</s:HGroup>
 	</s:Group>
 	<s:Group width="100%" height="100%">
 		<s:Rect width="100%" height="100%">

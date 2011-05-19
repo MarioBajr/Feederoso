@@ -55,6 +55,7 @@ package puremvc.mediator
 			{
 				case NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES:
 					this.subscription = notificationBody as Subscription;
+					this.view.setTitleText(this.subscription.title);
 					readerClient.getArticles({feed:this.subscription.id});
 					this.clearArticles();
 					break;
