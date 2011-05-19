@@ -418,15 +418,12 @@ package puremvc.service
 			_MODTOKEN = null;
 			_USERID = null;
 			_SID = null;
-			//            var gvo:GReaderVO = new GReaderVO();
-			//            gvo.SID = null;
-			//            gvo.USERID = null;
-			//          writeSO(gvo);
 			
 			var dataResp:Object = getResultObject();						
 			dataResp.result = new Object();
 			dataResp.result["ok"] = null;
-			gCommand.result(dataResp);			
+			gCommand.result(dataResp);
+			connected = false;
 		}
 		
 		// Destructive APIs begin
@@ -594,12 +591,12 @@ package puremvc.service
 				case GReaderCommandProxy.GREADER_USER:
 				case GReaderCommandProxy.GREADER_CHECK:
 					userResp = JSON.decode(result);
-					
 					if ( userResp && userResp.hasOwnProperty('userId') )
 					{					
 						dataResp = getResultObject();						
 						dataResp.result.r = new Object();
 						dataResp.result.r["ok"] = null;
+						dataResp.result.r["name"] = userResp['userName'];
 						dataResp.result.r["u"] = "#" + userResp['userId'];
 						_USERID = userResp['userId'];						
 						gCommand.result(dataResp);

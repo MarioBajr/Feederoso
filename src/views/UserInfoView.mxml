@@ -43,10 +43,13 @@
 				this.logoutButton.setSize( 42, 40 );
 				this.logoutToolbarID.addChild( this.logoutButton );
 				
+				var textFormat:TextFormat = new TextFormat();
+				textFormat.align = TextFormatAlign.CENTER;
+				
 				this.userLabel = new Label();
 				this.userLabel.x = MARGIN;
 				this.userLabel.y = MARGIN;
-				this.userLabel.text = "Mário Barbosa";
+				this.userLabel.format = textFormat;
 				this.nameToolbarID.addChild( this.userLabel );
 				
 				this.addEventListener(FlexEvent.UPDATE_COMPLETE, onUpdateComplete);

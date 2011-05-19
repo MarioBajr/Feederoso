@@ -27,6 +27,7 @@ package puremvc.mediator
 	import qnx.display.IowWindow;
 	
 	import utils.ObjectUtil;
+	import utils.StringUtil;
 	
 	import views.FeederosoHome;
 	
@@ -67,8 +68,9 @@ package puremvc.mediator
 			return [
 				NotificationNames.GREADER_LOGIN_SUCCESS,
 				NotificationNames.GREADER_LOGIN_FAIL,
+				NotificationNames.GREADER_LOGOUT,
 				NotificationNames.EXPANDED_ARTICLE_VIEW,
-				NotificationNames.DEFAULT_ARTICLE_VIEW
+				NotificationNames.DEFAULT_ARTICLE_VIEW,
 			];
 		}
 		
@@ -87,7 +89,10 @@ package puremvc.mediator
 					sharedObject.clear();
 					showErrorDialog(notificationBody as String);
 					break;
-				
+				case NotificationNames.GREADER_LOGOUT:
+					sharedObject.clear();
+					showLoginDialog();
+					break;
 				case NotificationNames.EXPANDED_ARTICLE_VIEW:
 					this.view.userInfoViewID.visible = false;
 					this.view.userInfoViewID.percentWidth = 0;
@@ -146,14 +151,20 @@ package puremvc.mediator
 		
 		private function authenticate(username:String=null, password:String=null):void
 		{
-			if(username == null && password == null)
+			if( StringUtil.isEmpty(username) && StringUtil.isEmpty(password) )
 			{
 				username = this.sharedObject.data.username;
 				password = this.sharedObject.data.password;
 			}
 			
-			if(!readerClient.connected)
+			if( StringUtil.isEmpty(username) || StringUtil.isEmpty(password) )
+			{
+				showErrorDialog("Authentication Fail");
+			}
+			else if (!readerClient.connected)
+			{
 				readerClient.authenticate(username, password);
+			}
 		}
 		
 		private function onErrorDialogSelect(event:Event):void

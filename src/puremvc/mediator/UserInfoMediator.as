@@ -3,6 +3,7 @@ package puremvc.mediator
 	import com.adobe.protocols.dict.Dict;
 	import com.adobe.utils.DictionaryUtil;
 	
+	import flash.events.MouseEvent;
 	import flash.utils.Dictionary;
 	
 	import org.puremvc.as3.interfaces.INotification;
@@ -11,10 +12,12 @@ package puremvc.mediator
 	import puremvc.NotificationNames;
 	import puremvc.proxy.GReaderProxy;
 	import puremvc.proxy.SubscriptionsProxy;
+	import puremvc.proxy.UserInfoProxy;
 	import puremvc.service.GReaderClient;
 	import puremvc.vo.Subscription;
 	import puremvc.vo.Tag;
 	
+	import qnx.notificationManager.NotificationManager;
 	import qnx.ui.data.DataProvider;
 	import qnx.ui.data.SectionDataProvider;
 	import qnx.ui.events.ListEvent;
@@ -32,6 +35,7 @@ package puremvc.mediator
 			super(NAME, viewComponent);
 			
 			this.view.subscriptionsSectionList.addEventListener(ListEvent.ITEM_CLICKED, onItemClicked);
+			this.view.logoutButton.addEventListener(MouseEvent.CLICK, onLogoutClick);
 		}
 		
 		public static function get NAME():String
@@ -47,7 +51,8 @@ package puremvc.mediator
 		{
 			return [
 				NotificationNames.GREADER_LOGIN_SUCCESS,
-				NotificationNames.GREADER_SUBSCRIPTIONS_SUCCESS
+				NotificationNames.GREADER_SUBSCRIPTIONS_SUCCESS,
+				NotificationNames.GREADER_USER_INFO
 			];
 		}
 		
@@ -60,9 +65,13 @@ package puremvc.mediator
 			{
 				case NotificationNames.GREADER_LOGIN_SUCCESS:
 					readerClient.getSubscriptions();
+					readerClient.userInfoCheck(false);
 					break;
 				case NotificationNames.GREADER_SUBSCRIPTIONS_SUCCESS:
 					this.reloadSubscriptions();
+					break;
+				case NotificationNames.GREADER_USER_INFO:
+					this.view.userLabel.text = userInfoProxy.name;
 					break;
 			}
 		}
@@ -113,6 +122,12 @@ package puremvc.mediator
 			}
 		}
 		
+		private function onLogoutClick(event:MouseEvent):void
+		{
+			if(readerClient.connected)
+				readerClient.signOut();
+		}
+		
 		/**
 		 * Getters and Setters
 		 **/
@@ -130,6 +145,11 @@ package puremvc.mediator
 		private function get subscriptionsProxy():SubscriptionsProxy
 		{
 			return facade.retrieveProxy( SubscriptionsProxy.NAME ) as SubscriptionsProxy;
+		}
+		
+		private function get userInfoProxy():UserInfoProxy
+		{
+			return facade.retrieveProxy( UserInfoProxy.NAME ) as UserInfoProxy;
 		}
 	}
 }

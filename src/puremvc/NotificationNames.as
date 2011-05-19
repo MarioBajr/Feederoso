@@ -21,6 +21,7 @@ package puremvc
 		
 		public static const GREADER_ARTICLES_SUCCESS:String = "GREADER_ARTICLES_SUCCESS";
 		public static const GREADER_SUBSCRIPTIONS_SUCCESS:String = "GREADER_SUBSCRIPTIONS_SUCCESS";
+		public static const GREADER_USER_INFO:String = "GREADER_USER_INFO";
 		
 		public static const GREADER_FAIL:String = "GREADER_FAIL";
 		

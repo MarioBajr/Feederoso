@@ -5,6 +5,7 @@ package puremvc.proxy
 	import mx.rpc.events.ResultEvent;
 	import mx.utils.UIDUtil;
 	
+	import org.puremvc.as3.patterns.observer.Notification;
 	import org.puremvc.as3.patterns.proxy.Proxy;
 	
 	import puremvc.NotificationNames;
@@ -55,7 +56,6 @@ package puremvc.proxy
 						facade.sendNotification( NotificationNames.GREADER_LOGIN_SUCCESS );
 					else
 						facade.sendNotification( NotificationNames.GREADER_LOGIN_FAIL, errorMessage );
-					
 					break;
 				case GREADER_SUBS:
 					if(success)
@@ -64,8 +64,7 @@ package puremvc.proxy
 						facade.sendNotification( NotificationNames.GREADER_SUBSCRIPTIONS_SUCCESS );
 					}
 					else
-						facade.sendNotification( NotificationNames.GREADER_FAIL );
-					
+						facade.sendNotification( NotificationNames.GREADER_FAIL, value );
 					break;
 				
 				case GREADER_GET:
@@ -76,17 +75,31 @@ package puremvc.proxy
 						facade.sendNotification( NotificationNames.GREADER_ARTICLES_SUCCESS );
 					}
 					else
-						facade.sendNotification( NotificationNames.GREADER_FAIL );
-					
+						facade.sendNotification( NotificationNames.GREADER_FAIL, value );
+					break;
+				
+				case GREADER_USER:
+					if(success)
+					{
+						userInfoProxy.setData( value.result ); 
+						facade.sendNotification( NotificationNames.GREADER_USER_INFO );
+					}
+					else
+						facade.sendNotification( NotificationNames.GREADER_FAIL, value );
 					break;
 				
 				case GREADER_UNREAD:
 					ObjectUtil.deepTrace(value);
 					break;
 				
+				case GREADER_LOGOUT:
+					facade.sendNotification( NotificationNames.GREADER_LOGOUT );
+					break;
+				
 				default:
 					break;
 			}
+
 			trace(value);
 			
 			trace("-------- GReaderCommandResult End");
@@ -110,6 +123,11 @@ package puremvc.proxy
 		private function get articlesProxy():ArticlesProxy
 		{
 			return fetchOrCreateProxyByName(ArticlesProxy.NAME) as ArticlesProxy;
+		}
+		
+		private function get userInfoProxy():UserInfoProxy
+		{
+			return fetchOrCreateProxyByName(UserInfoProxy.NAME) as UserInfoProxy;
 		}
 		
 		/**
