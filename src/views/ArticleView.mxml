@@ -122,9 +122,9 @@
 				this.title.height = LabelUtil.labelHeightForText( article.label, this.title.width, this.title.format );
 				this.titleView.height = this.title.height + 2*PADDING;
 				
-				this.resume.htmlText = article.desription || "RSS Missing Content, please click on the title!";
+				this.resume.htmlText = article.description || "RSS Missing Content, please click on the title!";
 				this.resume.y = this.title.y + this.title.height + GAP;
-				this.resume.height = LabelUtil.labelHeightForText( article.desription, this.resume.width, this.resume.format ) + 50;
+				this.resume.height = LabelUtil.labelHeightForText( article.description, this.resume.width, this.resume.format ) + 50;
 				
 				this.scrollPane.setScrollContent( this.contentView );
 				

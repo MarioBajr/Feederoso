@@ -1,5 +1,11 @@
 package puremvc.mediator
 {
+	
+	import com.adobe.utils.DictionaryUtil;
+	
+	import flash.utils.Dictionary;
+	
+	import org.casalib.util.DateUtil;
 	import org.puremvc.as3.interfaces.INotification;
 	import org.puremvc.as3.patterns.mediator.Mediator;
 	
@@ -11,6 +17,7 @@ package puremvc.mediator
 	import puremvc.vo.Subscription;
 	
 	import qnx.ui.data.DataProvider;
+	import qnx.ui.data.SectionDataProvider;
 	import qnx.ui.events.ListEvent;
 	
 	import utils.ObjectUtil;
@@ -71,14 +78,44 @@ package puremvc.mediator
 		
 		private function reloadArticles():void
 		{
-			var articles:Array = articlesProxy.articleBySubscription(this.subscription);
-			this.view.articlesList.dataProvider = new DataProvider(articles);
+			var articles:Array = articlesProxy.articles;
+			var sectionsByDay:Dictionary = new Dictionary();
+			var articlePerSections:Dictionary = new Dictionary();
+			
+			for each (var article:Article in articles)
+			{
+				var date:Date = article.date;
+				var dateString:String = DateUtil.formatDate(date, "l, M j, Y");
+				
+				sectionsByDay[dateString] = {label:dateString, dateNum:date.getTime()};
+				
+				if(!articlePerSections[dateString])
+					articlePerSections[dateString] = new Array();
+				
+				articlePerSections[dateString].push(article);
+			}
+			
+			var sections:Array = DictionaryUtil.getValues( sectionsByDay );
+			sections.sortOn("dateNum", Array.DESCENDING);
+			
+			var sectionDP:SectionDataProvider = new SectionDataProvider();
+			for each(var section:Object in sections)
+			{
+				sectionDP.addItem(section);
+				
+				for each (article in articlePerSections[section.label])
+				{
+					sectionDP.addChildToItem(article, section);
+				}
+			}
+			
+			this.view.articlesList.dataProvider = sectionDP;
 		}
 		
 		private function clearArticles():void
 		{
-			this.view.articlesList.selectedIndex = -1;
-			this.view.articlesList.dataProvider = new DataProvider();
+			this.view.articlesList.selectedItem = null;
+			this.view.articlesList.dataProvider = new SectionDataProvider();
 		}
 		
 		private function onItemClicked(event:ListEvent):void

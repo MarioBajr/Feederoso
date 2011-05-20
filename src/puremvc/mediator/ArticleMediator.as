@@ -21,12 +21,19 @@ package puremvc.mediator
 	{
 		private var article:Article;
 		
+		private const TEXT_COLOR_UP:uint = 0x000000;
+		private const TEXT_COLOR_DOWN:uint = 0xFFFFFF;
+		
+		private const BACKROUND_TITLE_COLOR_UP:uint = 0xcccccc;
+		private const BACKROUND_TITLE_COLOR_DOWN:uint = 0x0000FF;
+		
 		public function ArticleMediator(viewComponent:Object=null)
 		{
 			super(NAME, viewComponent);
 			
 			this.view.titleView.addEventListener(MouseEvent.MOUSE_DOWN, onTouchBegin);
-			this.view.titleView.addEventListener(MouseEvent.MOUSE_UP, onTouchEnd);
+			this.view.titleView.addEventListener(MouseEvent.MOUSE_UP, onTouchEnd); 
+			this.view.titleView.addEventListener(MouseEvent.MOUSE_OUT, onTouchOut);
 			this.view.closeButton.addEventListener(MouseEvent.CLICK, onCloseClick);
 			this.view.setWebViewMode(false);
 			this.clearArticle();
@@ -59,6 +66,7 @@ package puremvc.mediator
 				case NotificationNames.SHOW_ARTICLE_VIEW:
 					this.article = notificationBody as Article;
 					this.view.setArticle(article);
+					ObjectUtil.deepTrace( article.data );
 					break;
 				
 				case NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES:
@@ -74,25 +82,18 @@ package puremvc.mediator
 		private function onTouchBegin(event:MouseEvent):void
 		{
 			var format:TextFormat = this.view.title.format;
-			format.color = 0xFFFFFF;
+			format.color = TEXT_COLOR_DOWN;
 			this.view.title.format = format;
 			
 			this.view.titleView.graphics.clear();
-			this.view.titleView.graphics.beginFill( 0x0000FF );
+			this.view.titleView.graphics.beginFill( BACKROUND_TITLE_COLOR_DOWN );
 			this.view.titleView.graphics.drawRect(0, 0, 1, 1);
 			this.view.titleView.graphics.endFill();
 		}
 		
 		private function onTouchEnd(event:MouseEvent):void
 		{	
-			var format:TextFormat = this.view.title.format;
-			format.color = 0x000000;
-			this.view.title.format = format;
-			
-			this.view.titleView.graphics.clear();
-			this.view.titleView.graphics.beginFill( 0xcccccc );
-			this.view.titleView.graphics.drawRect(0, 0, 1, 1);
-			this.view.titleView.graphics.endFill();
+			this.onTouchOut(null);
 			
 			if(this.article.link)
 			{
@@ -100,6 +101,18 @@ package puremvc.mediator
 				this.view.setWebViewMode( true );
 				this.view.webView.loadURL( this.article.link );
 			}
+		}
+		
+		private function onTouchOut(event:MouseEvent):void
+		{
+			var format:TextFormat = this.view.title.format;
+			format.color = TEXT_COLOR_UP;
+			this.view.title.format = format;
+			
+			this.view.titleView.graphics.clear();
+			this.view.titleView.graphics.beginFill( BACKROUND_TITLE_COLOR_UP );
+			this.view.titleView.graphics.drawRect(0, 0, 1, 1);
+			this.view.titleView.graphics.endFill();
 		}
 		
 		private function onCloseClick(event:MouseEvent):void

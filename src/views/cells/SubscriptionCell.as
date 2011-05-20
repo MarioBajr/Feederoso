@@ -27,8 +27,8 @@ package views.cells
 		
 		private const MARGIN:uint = 10;
 		private const GAP:uint = 5;
-		private const BOX_MARGIN_H:uint = 6;
-		private const BOX_MARGIN_V:uint = 0;
+		private const BOX_MARGIN_H:uint = 4;
+		private const BOX_MARGIN_V:int = -2;
 		
 		public function SubscriptionCell()
 		{
@@ -104,7 +104,7 @@ package views.cells
 			
 			this.countView.graphics.clear();
 			this.countView.graphics.beginFill( color );
-			this.countView.graphics.drawRoundRect(0, 0, w, h, w/2, h/2);
+			this.countView.graphics.drawRoundRect(0, 0, w, h, h);
 			this.countView.graphics.endFill();
 		}
 		

@@ -1,14 +1,18 @@
 package puremvc.vo
 {
+	
 	import flash.utils.getQualifiedClassName;
 	
 	import mx.collections.ArrayCollection;
+	
+	import org.casalib.util.DateUtil;
 	
 	import utils.ObjectUtil;
 
 	public class Article extends BaseModel
 	{
 		public var data:Object;
+		private var _date:Date;
 		
 		public function Article(){}
 		
@@ -30,7 +34,7 @@ package puremvc.vo
 			return null;
 		}
 		
-		public function get desription():String
+		public function get description():String
 			
 		{
 			if(this.data)
@@ -44,6 +48,25 @@ package puremvc.vo
 			
 			ObjectUtil.deepTrace(this.data);
 			return null;
+		}
+		
+		public function get dateString():String
+		{
+			if(this.data)
+			{
+				if(this.data.hasOwnProperty("published"))
+					return this.data.published.toString();
+			}
+			return null;
+		}
+		
+		public function get date():Date
+		{
+			//Store for faster sorting property
+			if(!_date)
+				_date = DateUtil.iso8601ToDate( this.dateString );
+				
+			return _date;
 		}
 		
 		public function get link():String

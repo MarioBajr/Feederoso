@@ -14,7 +14,6 @@
 			
 			private function onCreationComplete(event:FlexEvent):void
 			{
-				trace("Creation Complete");
 				ApplicationFacade.getInstance().startup(this.stage);
 			}
 			

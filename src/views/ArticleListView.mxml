@@ -17,13 +17,14 @@
 			import qnx.ui.listClasses.AlternatingCellRenderer;
 			import qnx.ui.listClasses.List;
 			import qnx.ui.listClasses.ListSelectionMode;
+			import qnx.ui.listClasses.SectionList;
 			import qnx.ui.text.Label;
 			
 			import utils.LabelUtil;
 			
 			import views.cells.ArticleCell;
 			
-			public var articlesList:List;
+			public var articlesList:SectionList;
 			public var titleLabel:Label;
 			
 			private const FONT:uint = 20;
@@ -32,7 +33,7 @@
 			
 			private function onCreationComplete(event:FlexEvent):void
 			{
-				this.articlesList = new List();
+				this.articlesList = new SectionList();
 				this.articlesList.setSkin(ArticleCell);
 				this.articlesList.rowHeight = 100;
 				this.articlesList.selectionMode = ListSelectionMode.SINGLE;
