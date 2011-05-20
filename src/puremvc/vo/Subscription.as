@@ -7,6 +7,7 @@ package puremvc.vo
 		public var categories:Array;
 		public var sortid:String;
 		public var htmlUrl:String;
+		public var unreadCount:uint;
 		
 		public function Subscription() {}
 		

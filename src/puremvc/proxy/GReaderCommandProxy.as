@@ -82,14 +82,20 @@ package puremvc.proxy
 					if(success)
 					{
 						userInfoProxy.setData( value.result ); 
-						facade.sendNotification( NotificationNames.GREADER_USER_INFO );
+						facade.sendNotification( NotificationNames.GREADER_USER_INFO_SUCCESS );
 					}
 					else
 						facade.sendNotification( NotificationNames.GREADER_FAIL, value );
 					break;
 				
 				case GREADER_UNREAD:
-					ObjectUtil.deepTrace(value);
+					if(success)
+					{
+						subscriptionsProxy.processUnreadCount(value.result);
+						facade.sendNotification( NotificationNames.GREADER_UNREAD_SUCCESS );
+					}
+					else
+						facade.sendNotification( NotificationNames.GREADER_FAIL, value );
 					break;
 				
 				case GREADER_LOGOUT:

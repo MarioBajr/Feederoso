@@ -19,6 +19,7 @@
 			import qnx.ui.listClasses.ListSelectionMode;
 			import qnx.ui.listClasses.SectionList;
 			import qnx.ui.skins.buttons.BackButtonSkinBlack;
+			import qnx.ui.skins.listClasses.SectionListHeaderSkinBlack;
 			import qnx.ui.text.Label;
 			
 			import views.cells.SubscriptionCell;

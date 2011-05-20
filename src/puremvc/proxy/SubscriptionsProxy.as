@@ -8,15 +8,18 @@ package puremvc.proxy
 	
 	import org.puremvc.as3.patterns.proxy.Proxy;
 	
-	import puremvc.vo.Tag;
 	import puremvc.vo.Subscription;
+	import puremvc.vo.Tag;
 	
 	import utils.ObjectUtil;
 	
 	public class SubscriptionsProxy extends Proxy
 	{
+		
 		public var subscriptionsList:Array;
 		public var tagDict:Dictionary;
+		public var subscriptionById:Dictionary;
+		private var waitingSubsToProcess:Boolean;
 		
 		public function SubscriptionsProxy()
 		{
@@ -34,12 +37,14 @@ package puremvc.proxy
 			
 			this.subscriptionsList = new Array();
 			this.tagDict = new Dictionary();
+			this.subscriptionById = new Dictionary();
 			
 			var xml:XML = data as XML;
 			for each(var item:XML in xml.list.object)
 			{
 				var sub:Subscription = new Subscription();
 				sub.setUpModelWithXML( item );
+				subscriptionById[sub.id] = sub;
 				
 				for each(var label:Tag in sub.categories)
 				{
@@ -47,6 +52,16 @@ package puremvc.proxy
 				}
 				
 				this.subscriptionsList.push( sub );
+			}
+		}
+		
+		public function processUnreadCount(data:Object):void
+		{	
+			for each(var unreadFeed:Object in data.r.feed)
+			{
+				var sub:Subscription = subscriptionById[unreadFeed.id];
+				if(sub)
+					sub.unreadCount = unreadFeed.count;
 			}
 		}
 	}

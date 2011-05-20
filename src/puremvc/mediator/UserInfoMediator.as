@@ -19,6 +19,7 @@ package puremvc.mediator
 	
 	import qnx.notificationManager.NotificationManager;
 	import qnx.ui.data.DataProvider;
+	import qnx.ui.data.IDataProvider;
 	import qnx.ui.data.SectionDataProvider;
 	import qnx.ui.events.ListEvent;
 	
@@ -52,7 +53,8 @@ package puremvc.mediator
 			return [
 				NotificationNames.GREADER_LOGIN_SUCCESS,
 				NotificationNames.GREADER_SUBSCRIPTIONS_SUCCESS,
-				NotificationNames.GREADER_USER_INFO
+				NotificationNames.GREADER_USER_INFO_SUCCESS,
+				NotificationNames.GREADER_UNREAD_SUCCESS
 			];
 		}
 		
@@ -68,10 +70,16 @@ package puremvc.mediator
 					readerClient.userInfoCheck(false);
 					break;
 				case NotificationNames.GREADER_SUBSCRIPTIONS_SUCCESS:
+					readerClient.getUnreadCount();
 					this.reloadSubscriptions();
 					break;
-				case NotificationNames.GREADER_USER_INFO:
+				case NotificationNames.GREADER_USER_INFO_SUCCESS:
 					this.view.userLabel.text = userInfoProxy.name;
+					break;
+				case NotificationNames.GREADER_UNREAD_SUCCESS:
+					//Force Reload
+					var dataProvider:IDataProvider = this.view.subscriptionsSectionList.dataProvider;
+					this.view.subscriptionsSectionList.dataProvider = dataProvider;
 					break;
 			}
 		}
