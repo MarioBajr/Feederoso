@@ -9,6 +9,7 @@ package views.cells
 	
 	import puremvc.vo.Article;
 	
+	import qnx.ui.display.Image;
 	import qnx.ui.listClasses.AlternatingCellRenderer;
 	import qnx.ui.listClasses.CellRenderer;
 	import qnx.ui.skins.SkinStates;
@@ -22,11 +23,14 @@ package views.cells
 		private var titleLabel:Label;
 		private var descriptionLabel:Label;
 		private var maskShape:Shape;
+		private var starredImage:Image;
 		
 		private var dateUpColor:uint = 0x000000;
 		private var dateDownColor:uint = 0xFFFFFF;
+		
 		private var titleUpColor:uint = 0x000000;
 		private var titleDownColor:uint = 0xFFFFFF;
+		
 		private var descriptionUpColor:uint = 0x474747;
 		private var descriptionDownColor:uint = 0xFFFFFF;
 		
@@ -55,6 +59,12 @@ package views.cells
 			this.descriptionLabel.mouseEnabled = false;
 			this.descriptionLabel.mouseChildren = false;
 			this.addChild( this.descriptionLabel );
+			
+			this.starredImage = new Image();
+			this.starredImage.setImage("assets/star.png");
+			this.starredImage.x = 8;
+			this.starredImage.y = 5;	
+			this.addChild( this.starredImage );
 			
 			super();
 			
@@ -100,6 +110,8 @@ package views.cells
 			this.descriptionLabel.htmlText = article.description;
 			
 			this.dateLabel.text = DateUtil.formatDate(article.date, "h:i A");
+			this.alpha = article.isRead ? 0.5 : 1;
+			this.starredImage.visible = article.isStarred;
 			
 			calculateTextSize();
 			

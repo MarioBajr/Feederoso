@@ -95,7 +95,6 @@
 				this.closeToolbarID.addChild( this.closeButton );
 				
 				this.favoriteButton = new IconButton();
-				this.favoriteButton.setIcon("assets/star.png");
 				this.favoriteButton.setSkin(OutlineButtonSkinBlack);
 				this.favoriteButton.width = 42;
 				this.favoriteButton.height = 40;
@@ -125,6 +124,9 @@
 				this.resume.htmlText = article.description || "RSS Missing Content, please click on the title!";
 				this.resume.y = this.title.y + this.title.height + GAP;
 				this.resume.height = LabelUtil.labelHeightForText( article.description, this.resume.width, this.resume.format ) + 50;
+				
+				var imageURL:String = article.isStarred ? "assets/star.png" : "assets/no_star.png";
+				this.favoriteButton.setIcon(imageURL);
 				
 				this.scrollPane.setScrollContent( this.contentView );
 				

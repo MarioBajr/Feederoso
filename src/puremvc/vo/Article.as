@@ -88,5 +88,59 @@ package puremvc.vo
 			
 			return null;
 		}
+		
+		public function set isRead(value:Boolean):void
+		{
+			//TODO:
+		}
+		
+		public function get isRead():Boolean
+		{
+			if(this.data)
+			{
+				if(this.data.hasOwnProperty("category") && this.data.category.length > 0)
+				{
+					var tags:ArrayCollection = this.data.category;
+					var filteredTags:Array = tags.source.filter(isReadTag);
+					return (filteredTags.length > 0)
+				}
+			}
+			
+			return false;
+		}
+		
+		public function set isStarred(value:Boolean):void
+		{
+			//TODO:
+		}
+		
+		public function get isStarred():Boolean
+		{
+			if(this.data)
+			{
+				if(this.data.hasOwnProperty("category") && this.data.category.length > 0)
+				{
+					var tags:ArrayCollection = this.data.category;
+					var filteredTags:Array = tags.source.filter(isStarredTag);
+					return (filteredTags.length > 0)
+				}
+			}
+			
+			return false;
+		}
+		
+		/**
+		 *  Helpers
+		 **/
+		
+		private function isReadTag(item:*, index:int, array:Array):Boolean
+		{
+			return (item.label == "read");
+		}
+		
+		private function isStarredTag(item:*, index:int, array:Array):Boolean
+		{
+			return (item.label == "starred");
+		}
 	}
 }
