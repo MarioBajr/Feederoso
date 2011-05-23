@@ -29,6 +29,7 @@ package puremvc.mediator
 	
 	public class UserInfoMediator extends Mediator
 	{
+		private var selectedIndexPath:Object;
 		private var lastIdentifier:String;
 		
 		public function UserInfoMediator(viewComponent:Object=null)
@@ -54,7 +55,8 @@ package puremvc.mediator
 				NotificationNames.GREADER_LOGIN_SUCCESS,
 				NotificationNames.GREADER_SUBSCRIPTIONS_SUCCESS,
 				NotificationNames.GREADER_USER_INFO_SUCCESS,
-				NotificationNames.GREADER_UNREAD_SUCCESS
+				NotificationNames.GREADER_UNREAD_SUCCESS,
+				NotificationNames.SUBSCRIPTION_READCOUNT_CHANGED
 			];
 		}
 		
@@ -68,6 +70,7 @@ package puremvc.mediator
 				case NotificationNames.GREADER_LOGIN_SUCCESS:
 					readerClient.getSubscriptions();
 					readerClient.userInfoCheck(false);
+					readerClient.getToken();
 					break;
 				case NotificationNames.GREADER_SUBSCRIPTIONS_SUCCESS:
 					readerClient.getUnreadCount();
@@ -80,6 +83,12 @@ package puremvc.mediator
 					//Force Reload
 					var dataProvider:IDataProvider = this.view.subscriptionsSectionList.dataProvider;
 					this.view.subscriptionsSectionList.dataProvider = dataProvider;
+					break;
+				case NotificationNames.SUBSCRIPTION_READCOUNT_CHANGED:
+					var sectionsDP:SectionDataProvider = this.view.subscriptionsSectionList.dataProvider as SectionDataProvider;
+					var section:Object = sectionsDP.getItemAt( selectedIndexPath.section );
+					sectionsDP.updateChildInItemAt( section, notificationBody, selectedIndexPath.row);
+					trace("Selected Sub:", selectedIndexPath.section, selectedIndexPath.row, notificationBody);
 					break;
 			}
 		}
@@ -124,8 +133,11 @@ package puremvc.mediator
 				var subscription:Subscription = event.data as Subscription;
 				
 				if (lastIdentifier != subscription.id)
+				{
+					trace("Selected Sub:", event.section, event.index);
+					selectedIndexPath = {section:event.section, row:event.index};
 					facade.sendNotification( NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES, subscription);
-				
+				}
 				this.lastIdentifier = subscription.id;
 			}
 		}

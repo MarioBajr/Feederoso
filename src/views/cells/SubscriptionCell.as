@@ -81,7 +81,7 @@ package views.cells
 				this.countLabel.autoSize = TextFieldAutoSize.LEFT;
 				this.countLabel.x = this.width - this.countLabel.textWidth - BOX_MARGIN_H - MARGIN;
 				
-				this.drawCountBox(countViewUpColor);
+				this.setState( this.state );//Update Color
 			}
 			else
 			{

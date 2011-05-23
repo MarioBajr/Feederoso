@@ -3,6 +3,7 @@ package puremvc.mediator
 	
 	import com.adobe.utils.DictionaryUtil;
 	
+	import flash.net.dns.AAAARecord;
 	import flash.utils.Dictionary;
 	
 	import org.casalib.util.DateUtil;
@@ -19,6 +20,7 @@ package puremvc.mediator
 	import qnx.ui.data.DataProvider;
 	import qnx.ui.data.SectionDataProvider;
 	import qnx.ui.events.ListEvent;
+	import qnx.ui.listClasses.ICellRenderer;
 	
 	import utils.ObjectUtil;
 	
@@ -26,6 +28,7 @@ package puremvc.mediator
 	
 	public class ArticleListMediator extends Mediator
 	{
+		private var selectedIndexPath:Object;
 		private var subscription:Subscription;
 		private var lastIdentifier:String;
 		
@@ -49,7 +52,8 @@ package puremvc.mediator
 		{
 			return [
 				NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES,
-				NotificationNames.GREADER_ARTICLES_SUCCESS
+				NotificationNames.GREADER_ARTICLES_SUCCESS,
+				NotificationNames.ARTICLE_ISSTARRED_CHANGED
 			];
 		}
 		
@@ -68,6 +72,11 @@ package puremvc.mediator
 					break;
 				case NotificationNames.GREADER_ARTICLES_SUCCESS:
 					this.reloadArticles();
+					break;
+				case NotificationNames.ARTICLE_ISSTARRED_CHANGED:
+					var sectionsDP:SectionDataProvider = this.view.articlesList.dataProvider as SectionDataProvider;
+					var section:Object = sectionsDP.getItemAt( selectedIndexPath.section );
+					sectionsDP.updateChildInItemAt( section, notificationBody, selectedIndexPath.row);
 					break;
 			}
 		}
@@ -114,6 +123,8 @@ package puremvc.mediator
 		
 		private function clearArticles():void
 		{
+			this.lastIdentifier = null;
+			this.selectedIndexPath = null;
 			this.view.articlesList.selectedItem = null;
 			this.view.articlesList.dataProvider = new SectionDataProvider();
 		}
@@ -125,7 +136,20 @@ package puremvc.mediator
 				var article:Article = event.data as Article;
 				
 				if(lastIdentifier != article.id)
+				{
+					selectedIndexPath = {section:event.section, row:event.index};
 					facade.sendNotification( NotificationNames.SHOW_ARTICLE_VIEW, article);
+					
+					if(!article.isRead)
+					{
+						article.isRead = true;
+						article.syncronize(readerClient);
+						event.cell.data = event.data;//Force Update
+						this.subscription.unreadCount--;
+						sendNotification( NotificationNames.ARTICLE_ISREAD_CHANGED, article);
+						sendNotification( NotificationNames.SUBSCRIPTION_READCOUNT_CHANGED, subscription);
+					}
+				}
 				
 				lastIdentifier = article.id;
 			}

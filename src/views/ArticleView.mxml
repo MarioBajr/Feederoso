@@ -124,9 +124,7 @@
 				this.resume.htmlText = article.description || "RSS Missing Content, please click on the title!";
 				this.resume.y = this.title.y + this.title.height + GAP;
 				this.resume.height = LabelUtil.labelHeightForText( article.description, this.resume.width, this.resume.format ) + 50;
-				
-				var imageURL:String = article.isStarred ? "assets/star.png" : "assets/no_star.png";
-				this.favoriteButton.setIcon(imageURL);
+				this.updateFavoriteIcon(article.isStarred);
 				
 				this.scrollPane.setScrollContent( this.contentView );
 				
@@ -134,8 +132,17 @@
 					this.webView.loadURL(article.link);
 			}
 			
+			public function updateFavoriteIcon(enabled:Boolean):void
+			{
+				var imageURL:String = enabled ? "assets/star.png" : "assets/no_star.png";
+				this.favoriteButton.setIcon(imageURL);
+			}
+			
 			public function setWebViewMode(enabled:Boolean):void
 			{
+				this.closeButton.visible = enabled;
+				this.scrollPane.visible = !enabled;
+				
 				if(enabled)
 				{
 					if(!this.webView)
@@ -143,13 +150,12 @@
 						this.webView = new QNXStageWebView("ArticleBrowser");
 						this.webView.zoomToFitWidthOnLoad = true;
 						this.webView.blockPopups = true;
+						this.webView.visible = true;
 						this.webView.stage = this.stage;
 						this.webView.addEventListener(WebViewEvent.DOCUMENT_LOAD_FINISHED, onDocumentFinished);
 						this.webView.addEventListener(WebViewEvent.DOCUMENT_LOAD_FAILED, onDocumentFailed);
 						this.webView.addEventListener(WebViewEvent.DOCUMENT_LOAD_COMMITTED, onDocumentLoadCommited);
 					}
-					
-					this.closeButton.visible = true;
 				}
 				else
 				{
@@ -164,7 +170,6 @@
 					}
 					
 					onDocumentFinished(null);
-					this.closeButton.visible = false;
 				}
 			}
 			

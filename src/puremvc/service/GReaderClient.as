@@ -21,6 +21,8 @@ package puremvc.service
 	
 	import puremvc.proxy.GReaderCommandProxy;
 	
+	import utils.ObjectUtil;
+	
 	public class GReaderClient
 	{
 		private static const SOURCE:String =  'Feederoso (0.1)';
@@ -493,8 +495,9 @@ package puremvc.service
 					
 				}
 				actualParams['T'] = _MODTOKEN;
-				actualParams['async'] = 'true';
-				actualParams['s'] = params['f'];
+//				actualParams['async'] = 'true';
+				//actualParams['s'] = params['f'];
+				actualParams['ac'] = "edit-tags";
 				actualParams['i'] = params['i'];
 				
 				if ( actRemove )
@@ -502,6 +505,7 @@ package puremvc.service
 				else
 					actualParams['a'] = readdata;
 				
+				ObjectUtil.deepTrace(actualParams);
 				getReaderRequest(MARK_READ_URL, gCommand, true, actualParams);				
 			}
 			else

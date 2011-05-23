@@ -6,6 +6,10 @@ package puremvc.vo
 	import mx.collections.ArrayCollection;
 	
 	import org.casalib.util.DateUtil;
+	import org.puremvc.as3.patterns.facade.Facade;
+	
+	import puremvc.ApplicationFacade;
+	import puremvc.service.GReaderClient;
 	
 	import utils.ObjectUtil;
 
@@ -14,7 +18,19 @@ package puremvc.vo
 		public var data:Object;
 		private var _date:Date;
 		
-		public function Article(){}
+		private var _isReadRemote:Boolean;
+		private var _isReadRemoteFetched:Boolean;
+		private var _isRead:Boolean;
+		
+		private var _isStarredRemote:Boolean;
+		private var _isStarredRemoteFetched:Boolean;
+		private var _isStarred:Boolean;
+		
+		public function Article()
+		{
+			this._isReadRemoteFetched = false;
+			this._isStarredRemoteFetched = false;
+		}
 		
 		public function get id():String
 		{
@@ -91,42 +107,46 @@ package puremvc.vo
 		
 		public function set isRead(value:Boolean):void
 		{
-			//TODO:
+			_isRead = value;
 		}
 		
 		public function get isRead():Boolean
 		{
-			if(this.data)
+			if(!_isReadRemoteFetched && this.data)
 			{
 				if(this.data.hasOwnProperty("category") && this.data.category.length > 0)
 				{
 					var tags:ArrayCollection = this.data.category;
 					var filteredTags:Array = tags.source.filter(isReadTag);
-					return (filteredTags.length > 0)
+					_isReadRemote = (filteredTags.length > 0);
+					_isRead = _isReadRemote;
+					_isReadRemoteFetched = true;
 				}
 			}
 			
-			return false;
+			return _isRead;
 		}
 		
 		public function set isStarred(value:Boolean):void
 		{
-			//TODO:
+			_isStarred = value;
 		}
 		
 		public function get isStarred():Boolean
 		{
-			if(this.data)
+			if(!_isStarredRemoteFetched && this.data)
 			{
 				if(this.data.hasOwnProperty("category") && this.data.category.length > 0)
 				{
 					var tags:ArrayCollection = this.data.category;
 					var filteredTags:Array = tags.source.filter(isStarredTag);
-					return (filteredTags.length > 0)
+					_isReadRemote = (filteredTags.length > 0);
+					_isStarred = _isReadRemote;
+					_isStarredRemoteFetched = true;
 				}
 			}
 			
-			return false;
+			return _isStarred;
 		}
 		
 		/**
@@ -141,6 +161,28 @@ package puremvc.vo
 		private function isStarredTag(item:*, index:int, array:Array):Boolean
 		{
 			return (item.label == "starred");
+		}
+		
+		/**
+		 *  Syncronize
+		 **/
+		
+		public function syncronize(readerClient:GReaderClient):void
+		{
+			var willAdd:uint;
+			if(_isReadRemote != _isRead)
+			{
+				willAdd = _isRead ? 0 : 1;
+				readerClient.tagArticle({i:this.id, t:0, r:willAdd}, null);
+				_isReadRemote = _isRead;
+			}
+			
+			if(_isStarredRemote != isStarred)
+			{
+				willAdd = isStarred ? 0 : 1;
+				readerClient.tagArticle({i:this.id, t:2, r:willAdd}, null);
+				_isStarredRemote = isStarred;
+			}
 		}
 	}
 }

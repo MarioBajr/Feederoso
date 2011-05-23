@@ -9,6 +9,8 @@ package puremvc.mediator
 	
 	import puremvc.NotificationNames;
 	import puremvc.proxy.ArticlesProxy;
+	import puremvc.proxy.GReaderProxy;
+	import puremvc.service.GReaderClient;
 	import puremvc.vo.Article;
 	
 	import qnx.media.QNXStageWebView;
@@ -35,6 +37,7 @@ package puremvc.mediator
 			this.view.titleView.addEventListener(MouseEvent.MOUSE_UP, onTouchEnd); 
 			this.view.titleView.addEventListener(MouseEvent.MOUSE_OUT, onTouchOut);
 			this.view.closeButton.addEventListener(MouseEvent.CLICK, onCloseClick);
+			this.view.favoriteButton.addEventListener(MouseEvent.CLICK, onFavoriteClick);
 			this.view.setWebViewMode(false);
 			this.clearArticle();
 		}
@@ -66,7 +69,6 @@ package puremvc.mediator
 				case NotificationNames.SHOW_ARTICLE_VIEW:
 					this.article = notificationBody as Article;
 					this.view.setArticle(article);
-					ObjectUtil.deepTrace( article.data );
 					break;
 				
 				case NotificationNames.REQUEST_SUBSCRIPTION_ARTICLES:
@@ -129,6 +131,14 @@ package puremvc.mediator
 			this.view.favoriteButton.visible = false;
 		}
 		
+		private function onFavoriteClick(event:MouseEvent):void
+		{
+			this.article.isStarred = !this.article.isStarred;
+			this.article.syncronize(this.readerClient);
+			this.view.updateFavoriteIcon( this.article.isStarred );
+			sendNotification( NotificationNames.ARTICLE_ISSTARRED_CHANGED, this.article );
+		}
+		
 		/**
 		 * Getters and Setters
 		 **/
@@ -141,6 +151,11 @@ package puremvc.mediator
 		private function get articlesProxy():ArticlesProxy
 		{
 			return facade.retrieveProxy( ArticlesProxy.NAME ) as ArticlesProxy;
+		}
+		
+		private function get readerClient():GReaderClient
+		{
+			return facade.retrieveProxy( GReaderProxy.NAME ).getData() as GReaderClient;
 		}
 	}
 }

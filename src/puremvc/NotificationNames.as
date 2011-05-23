@@ -14,6 +14,10 @@ package puremvc
 //		public static const GREADER_MARK_ALL_READ:String = "GREADER_MARK_ALL_READ";
 //		public static const GREADER_ADD_SUB:String = "GREADER_ADD_SUB";
 		
+		public static const SUBSCRIPTION_READCOUNT_CHANGED:String = "SUBSCRIPTION_READCOUNT_CHANGED";
+		public static const ARTICLE_ISREAD_CHANGED:String = "ARTICLE_ISREAD_CHANGED";
+		public static const ARTICLE_ISSTARRED_CHANGED:String = "ARTICLE_ISSTARRED_CHANGED";
+		
 		public static const REQUEST_SUBSCRIPTION_ARTICLES:String = "REQUEST_SUBSCRIPTION_ARTICLES";
 		public static const SHOW_ARTICLE_VIEW:String = "SHOW_ARTICLE_VIEW";
 		public static const EXPANDED_ARTICLE_VIEW:String = "EXPANDED_ARTICLE_VIEW";
