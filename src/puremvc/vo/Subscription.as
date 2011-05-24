@@ -1,5 +1,7 @@
 package puremvc.vo
 {
+	import flash.display.BitmapData;
+
 	public class Subscription extends BaseModel
 	{
 		public var id:String;
