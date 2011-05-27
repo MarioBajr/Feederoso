@@ -1,0 +1,13 @@
+<qnx>
+  <initialWindow>
+    <systemChrome>none</systemChrome>
+    <transparent>false</transparent>
+  </initialWindow>
+  <category>core.media</category>
+  <icon>
+  	<image>assets/Icon.png</image>
+  </icon>
+  <author>actioncreations</author> 
+  <authorId>gYAAgHMOzKNdhGZPF7aUjL00VW4</authorId>
+  <splashscreen>assets/DarkSplash.png</splashscreen>
+</qnx>
